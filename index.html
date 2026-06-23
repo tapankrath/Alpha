@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <title>Alpha Console</title>
     
-    <!-- iOS / PWA Meta Framework Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AlphaConsole">
     <link class="apple-touch-icon" href="https://placehold.co/192x192/000000/22c55e?text=A">
     <link class="manifest" href="manifest.json">
     
-    <!-- High-Stability Tailwind & Lucide Engine Assets -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
@@ -26,21 +24,18 @@
 
     <div class="max-w-md mx-auto px-4 py-6 relative pb-12">
         
-        <!-- Settings Gear (Optimized Touch Target Zone) -->
         <div class="absolute top-6 right-4 z-40">
             <button onclick="toggleSettingsPanel()" class="text-zinc-100 active:scale-90 p-3 rounded-xl bg-zinc-900 border border-zinc-800 transition-all shadow-[0_0_15px_rgba(0,0,0,0.6)]">
                 <i data-lucide="settings" id="gearIcon" class="w-5 h-5 transition-transform duration-300"></i>
             </button>
         </div>
 
-        <!-- Header (Updated to Green & Yellow Gradient) -->
         <header class="text-left mb-6 pt-2">
             <h1 class="text-3xl font-black tracking-tight bg-gradient-to-r from-emerald-400 to-amber-300 bg-clip-text text-transparent">
                 ALPHA CONSOLE
             </h1>
         </header>
 
-        <!-- Configuration Key Drawer -->
         <div id="settingsPanel" class="bg-zinc-900 border-2 border-emerald-500 rounded-2xl p-4 shadow-2xl mb-6 hidden">
             <div class="flex items-center gap-2 mb-2">
                 <i data-lucide="key" class="w-4 h-4 text-emerald-400"></i>
@@ -62,12 +57,9 @@
             </div>
         </div>
 
-        <!-- Main Workspace Controls -->
         <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 shadow-xl mb-4 space-y-4">
             
-            <!-- Three Column Compact Horizontal Bar Layout -->
             <div class="flex items-end gap-2 w-full">
-                <!-- 1. Asset Input -->
                 <div class="w-[28%]">
                     <label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Asset</label>
                     <input 
@@ -78,14 +70,12 @@
                     >
                 </div>
 
-                <!-- 2. Midpoint Scan Button -->
                 <div class="w-[24%]">
                     <button onclick="fetchRealTimeData()" class="w-full bg-emerald-600 active:scale-95 text-white text-xs font-black py-3.5 rounded-xl flex items-center justify-center gap-1 transition-all uppercase tracking-wider shadow-md">
                         SCAN <i data-lucide="refresh-cw" class="w-3 h-3"></i>
                     </button>
                 </div>
 
-                <!-- 3. Smaller Allocation Limit -->
                 <div class="w-[48%]">
                     <div class="flex justify-between items-center mb-1.5 px-0.5">
                         <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Allocation</label>
@@ -105,7 +95,6 @@
                 </div>
             </div>
 
-            <!-- Mobile-Friendly Touch Block DTE Buttons -->
             <div class="pt-1">
                 <label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Target Days To Expiration (DTE)</label>
                 <div class="grid grid-cols-4 gap-2">
@@ -128,9 +117,26 @@
                     </button>
                 </div>
             </div>
+
+            <div class="pt-1">
+                <label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Target Strategy Architecture</label>
+                <div class="grid grid-cols-3 gap-2" id="strategyButtonsContainer">
+                    <button id="stratBtn-Strangle" onclick="selectLiveStrategy('Long Strangle')" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
+                        <span class="block text-xs font-black text-zinc-200">Strangle</span>
+                        <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Vol Breakout</span>
+                    </button>
+                    <button id="stratBtn-Spread" onclick="selectLiveStrategy('Bull Call Spread')" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
+                        <span class="block text-xs font-black text-zinc-200">Call Spread</span>
+                        <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Directional</span>
+                    </button>
+                    <button id="stratBtn-Condor" onclick="selectLiveStrategy('Iron Condor')" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
+                        <span class="block text-xs font-black text-zinc-200">Iron Condor</span>
+                        <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Range Bound</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <!-- Real-Time Metrics Status Strip -->
         <div class="grid grid-cols-2 gap-2 mb-4">
             <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex items-center gap-2.5">
                 <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
@@ -142,7 +148,7 @@
             <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex items-center gap-2.5">
                 <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
                 <div>
-                    <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">24H Delta</p>
+                    <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">24H Change</p>
                     <p id="liveChangeBadge" class="text-xs font-black text-zinc-200">--</p>
                 </div>
             </div>
@@ -162,7 +168,6 @@
             </div>
         </div>
 
-        <!-- Strategy Layout Output Card -->
         <div class="bg-zinc-900 border-2 border-zinc-800 rounded-2xl shadow-2xl overflow-hidden relative">
             
             <div id="loadingOverlay" class="absolute inset-0 bg-black/90 z-50 flex flex-col items-center justify-center gap-2 hidden">
@@ -170,7 +175,6 @@
                 <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Querying Telemetry...</p>
             </div>
 
-            <!-- Banner Header -->
             <div class="p-4 border-b border-zinc-800 bg-zinc-950/60 flex justify-between items-center">
                 <div>
                     <div class="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-0.5">Architecture Matrix</div>
@@ -185,13 +189,10 @@
                 </div>
             </div>
 
-            <!-- Option Leg Output -->
             <div class="p-4 space-y-4">
                 <div class="space-y-2" id="legsContainer">
-                    <!-- Populated dynamically -->
-                </div>
+                    </div>
 
-                <!-- Hard Limits Panel -->
                 <div class="grid grid-cols-3 gap-2 text-center font-medium">
                     <div class="bg-emerald-950/30 border border-emerald-500/30 rounded-xl p-2.5">
                         <div class="text-emerald-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Target TP</div>
@@ -207,7 +208,6 @@
                     </div>
                 </div>
 
-                <!-- Insight Text -->
                 <div class="bg-black border border-zinc-800 rounded-xl p-3 flex items-start gap-2.5">
                     <i data-lucide="sparkles" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
                     <p id="contextSummary" class="text-[11px] text-zinc-400 leading-relaxed font-medium">
@@ -218,11 +218,12 @@
         </div>
     </div>
 
-    <!-- Core App Application Execution Logic Script -->
     <script>
         let globalLivePrice = 0;
         let globalEstimatedUnitCost = 450;
         let selectedDteValue = 45; 
+        let selectedStrategyValue = "AI"; // Tracks user selection override or defers to automated AI logic
+        let currentCalculatedVol = 34.2;
 
         function toggleSettingsPanel() {
             const panel = document.getElementById('settingsPanel');
@@ -268,20 +269,31 @@
             document.getElementById('timeoutDisplay').innerText = timeLockText;
 
             let ticker = document.getElementById('tickerInput').value.trim().toUpperCase() || "QQQ";
-            let vol = ticker === "QQQ" || ticker === "SPY" ? 34.2 : 24.5;
-            adjustEstimatedUnitCost(vol);
+            adjustEstimatedUnitCost(currentCalculatedVol);
             calculateLiveSizing();
-            
-            evaluateOptionStrategy(ticker, globalLivePrice, 0, vol);
+            evaluateOptionStrategy(ticker, globalLivePrice, 0, currentCalculatedVol);
+        }
+
+        function selectLiveStrategy(strategyName) {
+            selectedStrategyValue = strategyName;
+            let ticker = document.getElementById('tickerInput').value.trim().toUpperCase() || "QQQ";
+            adjustEstimatedUnitCost(currentCalculatedVol);
+            calculateLiveSizing();
+            evaluateOptionStrategy(ticker, globalLivePrice, 0, currentCalculatedVol);
         }
 
         function adjustEstimatedUnitCost(volatility) {
             let durationMultiplier = selectedDteValue / 45;
-            if (volatility > 30) {
-                globalEstimatedUnitCost = Math.max(120, Math.round((globalLivePrice * 1.6) * durationMultiplier)); 
-            } else {
-                globalEstimatedUnitCost = Math.max(75, Math.round((globalLivePrice * 0.85) * durationMultiplier));
+            let baseStrategyCost = globalLivePrice * 0.85;
+
+            // Compute strategy-specific pricing parameters for allocation estimation
+            if (selectedStrategyValue === "Long Strangle" || (selectedStrategyValue === "AI" && volatility > 30)) {
+                baseStrategyCost = globalLivePrice * 1.6;
+            } else if (selectedStrategyValue === "Iron Condor") {
+                baseStrategyCost = globalLivePrice * 0.45; // Net credit spreads require lower margin allocation limits
             }
+
+            globalEstimatedUnitCost = Math.max(75, Math.round(baseStrategyCost * durationMultiplier));
         }
 
         function calculateLiveSizing() {
@@ -319,15 +331,16 @@
                 changeBadge.innerText = `${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`;
                 changeBadge.className = `text-xs font-black ${changePercent >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
                 
-                const volatilityProxy = ticker === "QQQ" || ticker === "SPY" ? 34.2 : 24.5;
-                document.getElementById('liveVolBadge').innerText = `HV ${volatilityProxy.toFixed(1)}%`;
+                currentCalculatedVol = ticker === "QQQ" || ticker === "SPY" ? 34.2 : 24.5;
+                document.getElementById('liveVolBadge').innerText = `HV ${currentCalculatedVol.toFixed(1)}%`;
                 
-                adjustEstimatedUnitCost(volatilityProxy);
-                evaluateOptionStrategy(ticker, globalLivePrice, changePercent, volatilityProxy);
+                adjustEstimatedUnitCost(currentCalculatedVol);
+                evaluateOptionStrategy(ticker, globalLivePrice, changePercent, currentCalculatedVol);
 
             } catch (error) {
                 console.error("Link error", error);
                 let fallbackPrice = ticker === "QQQ" ? 738.50 : 745.00;
+                globalLivePrice = fallbackPrice;
                 document.getElementById('livePriceBadge').innerText = `$${fallbackPrice.toFixed(2)}`;
                 evaluateOptionStrategy(ticker, fallbackPrice, 0.00, 34.2);
             } finally {
@@ -335,8 +348,48 @@
             }
         }
 
+        function updateStrategySelectionMatrixUI(aiRecommended) {
+            const containerIds = {
+                "Long Strangle": "stratBtn-Strangle",
+                "Bull Call Spread": "stratBtn-Spread",
+                "Iron Condor": "stratBtn-Condor"
+            };
+
+            Object.keys(containerIds).forEach(strat => {
+                const btn = document.getElementById(containerIds[strat]);
+                if (!btn) return;
+
+                // Clear dynamic UI tags and borders
+                btn.className = "bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative";
+                const existingBadge = btn.querySelector('.ai-badge');
+                if (existingBadge) existingBadge.remove();
+
+                // Append active configuration highlighting
+                if (selectedStrategyValue === strat) {
+                    btn.className = "bg-emerald-950/40 border-2 border-emerald-500 rounded-xl p-3 text-center relative";
+                }
+
+                // Inject AI Optimized contextual badge tags
+                if (aiRecommended === strat) {
+                    const badgeDiv = document.createElement('div');
+                    badgeDiv.className = "absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[7px] uppercase px-1 py-0.5 rounded-full font-black tracking-wider whitespace-nowrap ai-badge";
+                    badgeDiv.innerText = "AI Opt";
+                    btn.appendChild(badgeDiv);
+                    
+                    // If no user override exists, match the green layout selection boundary
+                    if (selectedStrategyValue === "AI") {
+                        btn.className = "bg-emerald-950/40 border-2 border-emerald-500 rounded-xl p-3 text-center relative";
+                    }
+                }
+            });
+        }
+
         function evaluateOptionStrategy(ticker, price, dailyMove, volatility) {
-            let strategy = "Long Strangle";
+            let aiRecommendedStrategy = volatility > 30 ? "Long Strangle" : "Bull Call Spread";
+            let activeStrategy = selectedStrategyValue === "AI" ? aiRecommendedStrategy : selectedStrategyValue;
+            
+            updateStrategySelectionMatrixUI(aiRecommendedStrategy);
+
             let badgeText = "High Vol";
             let legs = [];
             let mechanismText = "premium value growth";
@@ -344,29 +397,36 @@
             let callStrike = Math.round(price * 1.05); 
             let putStrike = Math.round(price * 0.95);  
 
-            if (volatility > 30) {
-                strategy = "Long Strangle";
+            if (activeStrategy === "Long Strangle") {
                 badgeText = "Vol Expanded";
                 legs = [
-                    { type: "Buy Call", strike: `$${callStrike}`, desc: "0.30Δ Expansion capture leg" },
-                    { type: "Buy Put", strike: `$${putStrike}`, desc: "0.30Δ Downside hedge leg" }
+                    { type: "Buy Call", strike: `$${callStrike}`, delta: "0.30Δ", desc: "Out-of-the-money variance capture" },
+                    { type: "Buy Put", strike: `$${putStrike}`, delta: "0.30Δ", desc: "Out-of-the-money downside shield" }
                 ];
                 mechanismText = "premium value growth";
-            } else {
-                strategy = "Bull Call Spread";
+            } else if (activeStrategy === "Bull Call Spread") {
                 badgeText = "Low Vol Spread";
                 let spreadSellStrike = Math.round(price * 1.04);
                 legs = [
-                    { type: "Buy Call", strike: `$${Math.round(price)}`, desc: "At-the-money intrinsic tracker" },
-                    { type: "Sell Call", strike: `$${spreadSellStrike}`, desc: "Out-of-the-money theta mitigation" }
+                    { type: "Buy Call", strike: `$${Math.round(price)}`, delta: "0.50Δ", desc: "At-the-money intrinsic tracker" },
+                    { type: "Sell Call", strike: `$${spreadSellStrike}`, delta: "0.28Δ", desc: "Out-of-the-money theta protection" }
                 ];
-                mechanismText = "net spread credit appreciation";
+                mechanismText = "net spread value appreciation";
+            } else if (activeStrategy === "Iron Condor") {
+                badgeText = "Neutral Income";
+                legs = [
+                    { type: "Buy Put", strike: `$${Math.round(price * 0.92)}`, delta: "0.05Δ", desc: "Wing protection boundary" },
+                    { type: "Sell Put", strike: `$${Math.round(price * 0.96)}`, delta: "0.15Δ", desc: "Premium income threshold" },
+                    { type: "Sell Call", strike: `$${Math.round(price * 1.04)}`, delta: "0.15Δ", desc: "Premium income threshold" },
+                    { type: "Buy Call", strike: `$${Math.round(price * 1.08)}`, delta: "0.05Δ", desc: "Wing protection boundary" }
+                ];
+                mechanismText = "net credit harvesting preservation";
             }
 
             const currentTimeLock = document.getElementById('timeoutDisplay').innerText || "15 DTE";
             const analysisSummary = `Execution Strategy Plan for $${ticker}$: Take-Profit trigger is locked at +50% ${mechanismText}. Absolute Hard Stop-Loss protects capital at -30% premium drawdown. Time Lock threshold enforces mandatory position closure if flat by the ${currentTimeLock} mark to mitigate final-stage theta decay.`;
 
-            document.getElementById('strategyTitle').innerText = strategy;
+            document.getElementById('strategyTitle').innerText = activeStrategy;
             document.getElementById('strategyTypeBadge').innerText = badgeText;
             document.getElementById('contextSummary').innerText = analysisSummary;
 
@@ -381,7 +441,8 @@
                             <p class="text-[10px] text-zinc-500 mt-0.5">${leg.desc}</p>
                         </div>
                         <div class="text-right">
-                            <span class="text-sm font-black text-emerald-400 font-mono">${leg.strike}</span>
+                            <span class="text-sm font-black text-emerald-400 font-mono block">${leg.strike}</span>
+                            <span class="text-[10px] font-bold text-zinc-400 font-mono tracking-wide">${leg.delta}</span>
                         </div>
                     </div>
                 `);
