@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" rx="110" fill="#0a0a0a"/>
+  
+  <!-- Subtle grid lines -->
+  <line x1="0" y1="170" x2="512" y2="170" stroke="#1a1a1a" stroke-width="1"/>
+  <line x1="0" y1="340" x2="512" y2="340" stroke="#1a1a1a" stroke-width="1"/>
+  <line x1="170" y1="0" x2="170" y2="512" stroke="#1a1a1a" stroke-width="1"/>
+  <line x1="340" y1="0" x2="340" y2="512" stroke="#1a1a1a" stroke-width="1"/>
+
+  <!-- Candlestick / spark chart -->
+  <polyline points="60,320 120,280 180,300 240,200 300,240 360,160 420,180 460,140"
+    fill="none" stroke="#10b981" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="0.25"/>
+
+  <!-- Alpha "A" glyph in emerald -->
+  <text x="256" y="310" 
+    font-family="'SF Pro Display', 'Helvetica Neue', Arial, sans-serif"
+    font-size="260" font-weight="900" text-anchor="middle"
+    fill="url(#gA)" letter-spacing="-8">α</text>
+
+  <!-- Thin rose underline bar -->
+  <rect x="96" y="370" width="320" height="8" rx="4" fill="#f43f5e" opacity="0.85"/>
+
+  <!-- "AC" monogram bottom right subtle -->
+  <text x="430" y="490"
+    font-family="'SF Pro Display', 'Helvetica Neue', Arial, sans-serif"
+    font-size="32" font-weight="800" text-anchor="end"
+    fill="#3f3f46" letter-spacing="1">AC</text>
+
+  <defs>
+    <linearGradient id="gA" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+  </defs>
+</svg>

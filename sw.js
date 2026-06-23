@@ -1,25 +1,20 @@
-const CACHE_NAME = 'alpha-console-v1';
-const ASSETS = [
-  'index.html',
-  'manifest.json',
-  'https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4',
-  'https://unpkg.com/lucide@latest'
-];
+const CACHE = 'alphaconsole-v1';
+const ASSETS = ['./index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
+  self.skipWaiting();
 });
 
-self.addEventListener('fetch', (e) => {
-  // Always verify external live API data stream channels are prioritized over cache pools
-  if (e.request.url.includes('finnhub.io')) {
-    return fetch(e.request);
-  }
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys().then(keys =>
+    Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+  ));
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then((cachedResponse) => {
-      return cachedResponse || fetch(e.request);
-    })
+    fetch(e.request).catch(() => caches.match(e.request))
   );
 });
