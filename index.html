@@ -15,192 +15,205 @@
     <style>
         * { -webkit-tap-highlight-color: transparent; }
         body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
     </style>
 </head>
 <body class="bg-black text-white min-h-screen font-sans antialiased selection:bg-emerald-500/40">
 
-    <div class="flex flex-col md:flex-row max-w-5xl mx-auto min-h-screen">
+    <div class="max-w-md mx-auto pb-8 min-h-screen flex flex-col px-3">
         
-        <aside class="w-full md:w-32 bg-zinc-950 border-b md:border-b-0 md:border-r border-zinc-900 flex flex-col pt-3 pb-2 md:pb-4 sticky top-0 z-50 md:h-screen select-none">
-            <div class="hidden md:block text-[9px] font-black text-zinc-500 tracking-widest uppercase mb-3 border-b border-zinc-900 pb-2 w-full text-center">
-                Watchlist
-            </div>
+        <div class="sticky top-0 z-40 bg-black/95 pt-3 pb-2 border-b border-zinc-900/90 backdrop-blur-md space-y-2.5">
             
-            <div id="watchlistContainer" class="flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto no-scrollbar gap-2 px-3 md:px-2 w-full">
-                </div>
-        </aside>
-
-        <div class="flex-1 pb-6 min-w-0">
-            
-            <div class="bg-black pt-3 px-3 pb-2 border-b border-zinc-900 sticky top-0 z-40 space-y-2.5">
-                
-                <div class="flex items-center justify-between">
-                    <h1 class="text-xl font-black tracking-tight">
+            <div class="flex items-center justify-between">
+                <header class="pt-0.5">
+                    <h1 class="text-xl font-black tracking-tight uppercase">
                         <span class="text-emerald-500">Alpha</span><span class="text-rose-500">Console</span>
                     </h1>
-                    <button onclick="toggleSettingsPanel()" class="text-zinc-400 p-1.5 rounded-lg bg-zinc-900 border border-zinc-800">
-                        <i data-lucide="settings" id="gearIcon" class="w-4 h-4 transition-transform duration-300"></i>
+                </header>
+                <button onclick="toggleSettingsPanel()" class="text-zinc-400 active:scale-90 p-1.5 rounded-lg bg-zinc-900 border border-zinc-800 transition-all">
+                    <i data-lucide="settings" id="gearIcon" class="w-4 h-4 transition-transform duration-300"></i>
+                </button>
+            </div>
+
+            <div id="settingsPanel" class="bg-zinc-900 border border-emerald-500 rounded-xl p-3 shadow-2xl hidden">
+                <div class="flex items-center gap-2 mb-1.5">
+                    <i data-lucide="key" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    <h3 class="text-[10px] font-black text-white uppercase tracking-wider">Finnhub Token Vault</h3>
+                </div>
+                <div class="flex gap-2">
+                    <input 
+                        type="password" 
+                        id="apiKeyInput" 
+                        placeholder="Private token"
+                        class="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 font-mono"
+                    >
+                    <button onclick="saveApiKey()" class="bg-emerald-600 active:bg-emerald-700 text-white font-black text-[10px] px-3 rounded-lg uppercase tracking-wider transition-all">
+                        Save
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-2.5 space-y-2.5">
+                
+                <div class="flex items-center gap-2 w-full">
+                    <div class="w-[55%] relative">
+                        <select 
+                            id="watchlistDropdown" 
+                            onchange="selectDropdownTicker(this.value)"
+                            class="w-full bg-black border border-zinc-800 rounded-lg pl-3 pr-8 py-2 text-xs font-black text-white tracking-wider uppercase focus:outline-none focus:border-emerald-500 cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap"
+                        >
+                            </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-zinc-500">
+                            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+                        </div>
+                    </div>
+
+                    <div class="w-[45%] flex items-center bg-black border border-zinc-800 rounded-lg px-2 py-2 justify-between">
+                        <div class="flex items-center min-w-0">
+                            <span class="text-zinc-600 font-bold text-xs mr-0.5">$</span>
+                            <input 
+                                type="number" 
+                                id="capitalInput" 
+                                value="5000" 
+                                step="500"
+                                oninput="executeRecalculationSequence()" 
+                                class="w-16 bg-transparent text-xs font-bold text-white focus:outline-none font-mono"
+                            >
+                        </div>
+                        <span id="allocationDisplay" class="text-[10px] font-black text-emerald-400 font-mono tracking-tighter">$5,000</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 w-full bg-black/40 border border-zinc-800/40 rounded-lg p-1.5 justify-between">
+                    <div class="flex items-center gap-1.5 w-[65%]">
+                        <span class="text-[8px] font-black text-zinc-500 uppercase tracking-wider whitespace-nowrap pl-0.5">Custom Symbol:</span>
+                        <input 
+                            type="text" 
+                            id="tickerInput" 
+                            placeholder="e.g. TSLA" 
+                            class="w-20 bg-black border border-zinc-800 rounded px-1.5 py-1 text-[11px] font-black text-white focus:outline-none focus:border-emerald-500 uppercase text-center font-mono"
+                        >
+                        <button onclick="fetchCustomTicker()" class="bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-emerald-400 font-black px-2 py-1 rounded text-[10px] active:scale-95 transition-all">
+                            + ADD
+                        </button>
+                    </div>
+                    <button onclick="removeActiveTicker()" class="bg-zinc-900/40 border border-zinc-800 hover:border-rose-900/50 text-rose-400/80 font-bold px-2 py-1 rounded text-[9px] active:scale-95 transition-all flex items-center gap-1">
+                        <i data-lucide="trash-2" class="w-2.5 h-2.5"></i> DELETE CURRENT
                     </button>
                 </div>
 
-                <div id="settingsPanel" class="bg-zinc-900 border border-emerald-500 rounded-xl p-3 hidden">
-                    <div class="flex items-center gap-2 mb-1.5">
-                        <i data-lucide="key" class="w-3.5 h-3.5 text-emerald-400"></i>
-                        <h3 class="text-[10px] font-black uppercase tracking-wider">Finnhub Token Vault</h3>
-                    </div>
-                    <div class="flex gap-2">
-                        <input type="password" id="apiKeyInput" placeholder="Private token" class="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none">
-                        <button onclick="saveApiKey()" class="bg-emerald-600 text-white font-black text-[10px] px-3 rounded-lg uppercase tracking-wider">Save</button>
-                    </div>
-                </div>
-
-                <div class="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-2.5 space-y-2.5">
-                    
-                    <div class="flex gap-2">
-                        <div class="w-1/4">
-                            <input type="text" id="tickerInput" value="QQQ" class="w-full bg-black border border-zinc-800 rounded-lg py-2 text-xs font-black text-white text-center uppercase tracking-wider focus:border-emerald-500 focus:outline-none">
-                        </div>
-                        <div class="w-1/4">
-                            <button onclick="fetchRealTimeData()" class="w-full bg-emerald-600 text-white text-[11px] font-black py-2 rounded-lg tracking-wider active:scale-95 transition-all">SCAN</button>
-                        </div>
-                        <div class="w-1/2 flex items-center bg-black border border-zinc-800 rounded-lg px-2.5 py-2 justify-between">
-                            <div class="flex items-center">
-                                <span class="text-zinc-600 font-bold text-xs mr-0.5">$</span>
-                                <input type="number" id="capitalInput" value="5000" step="500" oninput="calculateLiveSizing()" class="w-16 bg-transparent text-xs font-bold text-white focus:outline-none font-mono">
-                            </div>
-                            <span id="allocationDisplay" class="text-[11px] font-black text-emerald-400 font-mono">$5,000</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-1">
-                        <span class="text-[9px] font-black text-zinc-500 uppercase tracking-widest block pl-0.5">Target Expiration (DTE)</span>
-                        <div class="grid grid-cols-4 gap-1.5" id="dteButtonsContainer">
-                            <button onclick="selectLiveDte(7, this)" class="bg-black border border-zinc-800 rounded-lg py-1.5 text-center transition-all">
-                                <div class="text-xs font-black text-zinc-300">7</div><div class="text-[7px] text-zinc-500 font-bold uppercase tracking-tight">WKLY</div>
-                            </button>
-                            <button onclick="selectLiveDte(15, this)" class="bg-black border border-zinc-800 rounded-lg py-1.5 text-center transition-all">
-                                <div class="text-xs font-black text-zinc-300">15</div><div class="text-[7px] text-zinc-500 font-bold uppercase tracking-tight">BIWK</div>
-                            </button>
-                            <button onclick="selectLiveDte(30, this)" class="bg-black border border-zinc-800 rounded-lg py-1.5 text-center transition-all">
-                                <div class="text-xs font-black text-zinc-300">30</div><div class="text-[7px] text-zinc-500 font-bold uppercase tracking-tight">MTH</div>
-                            </button>
-                            <button id="recommendedDteBtn" onclick="selectLiveDte(45, this)" class="bg-emerald-950/40 border-2 border-emerald-500 rounded-lg py-1.5 text-center transition-all relative">
-                                <span class="absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-[6px] px-1 rounded font-black tracking-tighter uppercase whitespace-nowrap">AI OPT</span>
-                                <div class="text-xs font-black text-emerald-400">45</div><div class="text-[7px] text-emerald-500/80 font-bold uppercase tracking-tight">STD</div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="space-y-1">
-                        <span class="text-[9px] font-black text-zinc-500 uppercase tracking-widest block pl-0.5">Strategy Architecture</span>
-                        <div class="grid grid-cols-3 gap-1.5" id="strategyButtonsContainer">
-                            <button id="stratBtn-Strangle" onclick="selectLiveStrategy('Strangle', this)" class="bg-emerald-950/40 border-2 border-emerald-500 rounded-lg py-1.5 text-center transition-all relative">
-                                <span class="absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-[6px] px-1 rounded font-black tracking-tighter uppercase whitespace-nowrap">AI OPT</span>
-                                <div class="text-xs font-black text-emerald-400">Strangle</div><div class="text-[7px] text-emerald-500/80 font-bold uppercase tracking-tight">VOL BREAKOUT</div>
-                            </button>
-                            <button id="stratBtn-Spread" onclick="selectLiveStrategy('Call Spread', this)" class="bg-black border border-zinc-800 rounded-lg py-1.5 text-center transition-all relative">
-                                <div class="text-xs font-black text-zinc-300">Call Spread</div><div class="text-[7px] text-zinc-500 font-bold uppercase tracking-tight">DIRECTIONAL</div>
-                            </button>
-                            <button id="stratBtn-Condor" onclick="selectLiveStrategy('Iron Condor', this)" class="bg-black border border-zinc-800 rounded-lg py-1.5 text-center transition-all relative">
-                                <div class="text-xs font-black text-zinc-300">Iron Condor</div><div class="text-[7px] text-zinc-500 font-bold uppercase tracking-tight">RANGE BOUND</div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="px-3 mt-3 space-y-3">
-                
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2">
-                        <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
-                        <div>
-                            <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Spot Price</p>
-                            <p id="livePriceBadge" class="text-xs font-black text-zinc-200">Loading...</p>
+                    <div class="space-y-1">
+                        <label class="text-[8px] font-black text-zinc-500 uppercase tracking-widest block pl-0.5">AI Best-Fit Strategy</label>
+                        <div id="strategyStatusDisplay" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs font-black tracking-wider uppercase text-emerald-400 font-mono">
+                            --
                         </div>
                     </div>
-                    <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2">
-                        <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
-                        <div>
-                            <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">24H Change</p>
-                            <p id="liveChangeBadge" class="text-xs font-black text-zinc-200">--</p>
-                        </div>
-                    </div>
-                    <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2">
-                        <i data-lucide="bar-chart-3" class="w-4 h-4 text-amber-400"></i>
-                        <div>
-                            <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Calculated HV</p>
-                            <p id="liveVolBadge" class="text-xs font-black text-zinc-200">Tracking...</p>
-                        </div>
-                    </div>
-                    <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-teal-400"></i>
-                        <div>
-                            <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Risk Guard</p>
-                            <p class="text-xs font-black text-teal-400">Hedge Safe</p>
+
+                    <div class="space-y-1">
+                        <label class="text-[8px] font-black text-zinc-500 uppercase tracking-widest block pl-0.5">Optimal Duration Plan</label>
+                        <div id="dteStatusDisplay" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs font-black tracking-wider uppercase text-zinc-300 font-mono">
+                            --
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden relative shadow-lg">
-                    
-                    <div id="loadingOverlay" class="absolute inset-0 bg-black/95 z-50 flex flex-col items-center justify-center gap-2 hidden">
-                        <div class="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                        <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Querying Telemetry...</p>
-                    </div>
-
-                    <div class="p-3 border-b border-zinc-800 bg-zinc-950/40 flex justify-between items-center">
-                        <div>
-                            <div class="text-[8px] font-black text-emerald-400 uppercase tracking-widest mb-0.5">Architecture Matrix</div>
-                            <div class="flex items-center gap-2">
-                                <h2 id="strategyTitle" class="text-base font-black text-white tracking-tight">Processing...</h2>
-                                <span id="strategyTypeBadge" class="text-[8px] font-bold bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20 uppercase tracking-wide">--</span>
-                            </div>
-                        </div>
-                        <div class="text-right bg-black px-2.5 py-1 rounded-lg border border-zinc-800">
-                            <div class="text-[7px] font-bold text-zinc-500 uppercase tracking-wider mb-0.5">Sizing</div>
-                            <div id="contractSizingDisplay" class="text-sm font-black text-emerald-400 font-mono">--</div>
-                        </div>
-                    </div>
-
-                    <div class="p-3 space-y-4">
-                        <div class="space-y-2" id="legsContainer">
-                            </div>
-
-                        <div class="grid grid-cols-3 gap-2 text-center">
-                            <div class="bg-emerald-950/20 border border-emerald-500/20 rounded-lg p-2">
-                                <div class="text-emerald-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Target TP</div>
-                                <div id="tpDisplay" class="text-xs font-black text-emerald-300 font-mono">50%</div>
-                            </div>
-                            <div class="bg-rose-950/10 border border-rose-500/20 rounded-lg p-2">
-                                <div class="text-rose-400/90 text-[8px] uppercase tracking-widest font-black mb-0.5">Stop Hard</div>
-                                <div id="slDisplay" class="text-xs font-black text-rose-400/90 font-mono">30%</div>
-                            </div>
-                            <div class="bg-amber-950/20 border border-amber-500/20 rounded-lg p-2">
-                                <div class="text-amber-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Time Lock</div>
-                                <div id="timeoutDisplay" class="text-xs font-black text-amber-300 font-mono">15 DTE</div>
-                            </div>
-                        </div>
-
-                        <div class="bg-black border border-zinc-800 rounded-lg p-2.5 flex items-start gap-2.5">
-                            <i data-lucide="sparkles" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
-                            <p id="contextSummary" class="text-xs text-zinc-300 leading-relaxed font-medium">Awaiting Ingestion...</p>
-                        </div>
-                    </div>
-                </div>
-                
             </div>
+        </div>
+
+        <div class="mt-3 space-y-3 flex-1">
+            
+            <div class="grid grid-cols-2 gap-2">
+                <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2">
+                    <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+                    <div>
+                        <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Spot Price</p>
+                        <p id="livePriceBadge" class="text-xs font-black text-zinc-200">Loading...</p>
+                    </div>
+                </div>
+                <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2">
+                    <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+                    <div>
+                        <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">24H Change</p>
+                        <p id="liveChangeBadge" class="text-xs font-black text-zinc-200">--</p>
+                    </div>
+                </div>
+                <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-amber-400"></i>
+                    <div>
+                        <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Calculated HV</p>
+                        <p id="liveVolBadge" class="text-xs font-black text-zinc-200">Tracking...</p>
+                    </div>
+                </div>
+                <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-teal-400"></i>
+                    <div>
+                        <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Risk Guard</p>
+                        <p class="text-xs font-black text-teal-400">Hedge Safe</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden relative shadow-lg">
+                
+                <div id="loadingOverlay" class="absolute inset-0 bg-black/95 z-50 flex flex-col items-center justify-center gap-2 hidden">
+                    <div class="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Querying Telemetry...</p>
+                </div>
+
+                <div class="p-3 border-b border-zinc-800 bg-zinc-950/40 flex justify-between items-center">
+                    <div>
+                        <div class="text-[8px] font-black text-emerald-400 uppercase tracking-widest mb-0.5">Architecture Matrix</div>
+                        <div class="flex items-center gap-2">
+                            <h2 id="strategyTitle" class="text-base font-black text-white tracking-tight">Processing...</h2>
+                            <span id="strategyTypeBadge" class="text-[8px] font-bold bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20 uppercase tracking-wide">--</span>
+                        </div>
+                    </div>
+                    <div class="text-right bg-black px-2.5 py-1 rounded-lg border border-zinc-800">
+                        <div class="text-[7px] font-bold text-zinc-500 uppercase tracking-wider mb-0.5">Sizing</div>
+                        <div id="contractSizingDisplay" class="text-sm font-black text-emerald-400 font-mono">--</div>
+                    </div>
+                </div>
+
+                <div class="p-3 space-y-4">
+                    <div class="space-y-2" id="legsContainer">
+                        </div>
+
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-emerald-950/20 border border-emerald-500/20 rounded-lg p-2">
+                            <div class="text-emerald-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Target TP</div>
+                            <div id="tpDisplay" class="text-xs font-black text-emerald-300 font-mono">50%</div>
+                        </div>
+                        <div class="bg-rose-950/10 border border-rose-500/20 rounded-lg p-2">
+                            <div class="text-rose-400/90 text-[8px] uppercase tracking-widest font-black mb-0.5">Stop Hard</div>
+                            <div id="slDisplay" class="text-xs font-black text-rose-400/90 font-mono">30%</div>
+                        </div>
+                        <div class="bg-amber-950/20 border border-amber-500/20 rounded-lg p-2">
+                            <div class="text-amber-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Time Lock</div>
+                            <div id="timeoutDisplay" class="text-xs font-black text-amber-300 font-mono">15 DTE</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-black border border-zinc-800 rounded-lg p-2.5 flex items-start gap-2.5">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
+                        <p id="contextSummary" class="text-xs text-zinc-300 leading-relaxed font-medium">
+                            Awaiting Ingestion...
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </div>
 
     <script>
         let globalLivePrice = 0;
         let globalEstimatedUnitCost = 450;
-        let selectedDteValue = 45; 
-        let selectedStrategyValue = "Strangle"; 
         let currentCalculatedVol = 34.2;
+
+        // Current automated recommendations state computed from active asset profile
+        let computedStrategy = "Strangle";
+        let computedDte = 45;
 
         const baselinePreloadTickers = [
             "QQQ", "SPY", "NVDA", "AAPL", "AMZN", "MSFT", "GOOG", "META", 
@@ -216,46 +229,95 @@
                 currentWatchlist = [...baselinePreloadTickers];
                 localStorage.setItem('alpha_console_watchlist', JSON.stringify(currentWatchlist));
             }
-            renderWatchlistUI();
+            renderDropdownUI();
         }
 
-        function renderWatchlistUI() {
-            const container = document.getElementById('watchlistContainer');
-            container.innerHTML = '';
+        function renderDropdownUI() {
+            const dropdown = document.getElementById('watchlistDropdown');
+            const previousSelection = dropdown.value || "QQQ";
+            dropdown.innerHTML = '';
             
             currentWatchlist.forEach(ticker => {
-                const elementRow = document.createElement('div');
-                elementRow.className = "flex-shrink-0 flex items-center justify-between border border-zinc-800 md:border-b md:border-zinc-900 py-1.5 md:py-2.5 px-2.5 md:px-2 bg-zinc-900/40 md:bg-transparent hover:bg-zinc-900 rounded-lg md:rounded-none cursor-pointer min-w-[78px] md:min-w-0 transition-colors";
-                elementRow.setAttribute('onclick', `selectWatchlistTicker('${ticker}')`);
-                
-                elementRow.innerHTML = `
-                    <span class="text-[11px] md:text-xs font-black tracking-wider text-zinc-200">${ticker}</span>
-                    <button onclick="deleteWatchlistTicker(event, '${ticker}')" class="text-zinc-500 hover:text-rose-500 ml-2 md:ml-1 font-bold text-xs transition-colors">&times;</button>
-                `;
-                container.appendChild(elementRow);
+                const opt = document.createElement('option');
+                opt.value = ticker;
+                opt.innerText = ticker;
+                opt.className = "bg-zinc-950 text-white font-mono text-sm py-2";
+                dropdown.appendChild(opt);
             });
+            
+            if(currentWatchlist.includes(previousSelection)) {
+                dropdown.value = previousSelection;
+            } else {
+                dropdown.value = currentWatchlist[0] || "QQQ";
+            }
         }
 
-        function selectWatchlistTicker(ticker) {
-            document.getElementById('tickerInput').value = ticker;
+        // AUTOMATED RECO ENGINE CONFIG MATRIX
+        function computeBestFitProfile(ticker) {
+            // 1. Core Macro Indices -> Long Non-Directional Strangles
+            if (ticker === "QQQ" || ticker === "SPY") {
+                computedStrategy = "Strangle";
+                computedDte = 45;
+            } 
+            // 2. Ultra High Beta Growth Volatility Momentum -> Short-Duration Call Spreads
+            else if (["NVDA", "TSLA", "AMD", "CRWD", "MU"].includes(ticker)) {
+                computedStrategy = "Call Spread";
+                computedDte = 15;
+            } 
+            // 3. Mega Cap Cash-Flow Stability Range -> Iron Condors
+            else {
+                computedStrategy = "Iron Condor";
+                computedDte = 30;
+            }
+
+            // Render updated metrics straight into the UI matrix elements
+            const stratBox = document.getElementById('strategyStatusDisplay');
+            stratBox.innerText = computedStrategy;
+            if(computedStrategy === "Strangle") stratBox.className = "w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs font-black tracking-wider uppercase text-emerald-400 font-mono";
+            else if(computedStrategy === "Call Spread") stratBox.className = "w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs font-black tracking-wider uppercase text-zinc-300 font-mono";
+            else stratBox.className = "w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs font-black tracking-wider uppercase text-amber-400 font-mono";
+
+            document.getElementById('dteStatusDisplay').innerText = `${computedDte} DTE`;
+
+            // Adjust parameters row timing indicators
+            const timeLockText = computedDte <= 7 ? "2 Days" : (computedDte <= 15 ? "4 Days" : (computedDte === 30 ? "7 DTE" : "15 DTE"));
+            document.getElementById('timeoutDisplay').innerText = timeLockText;
+        }
+
+        function selectDropdownTicker(ticker) {
             fetchRealTimeData();
         }
 
-        function appendToWatchlist(ticker) {
-            if (!ticker) return;
-            const absoluteTicker = ticker.toUpperCase().trim();
-            if (currentWatchlist.includes(absoluteTicker)) return;
+        function fetchCustomTicker() {
+            const rawInput = document.getElementById('tickerInput').value.trim().toUpperCase();
+            if(!rawInput) return;
             
-            currentWatchlist.unshift(absoluteTicker);
-            localStorage.setItem('alpha_console_watchlist', JSON.stringify(currentWatchlist));
-            renderWatchlistUI();
+            if (!currentWatchlist.includes(rawInput)) {
+                currentWatchlist.unshift(rawInput);
+                localStorage.setItem('alpha_console_watchlist', JSON.stringify(currentWatchlist));
+                renderDropdownUI();
+            }
+            
+            document.getElementById('watchlistDropdown').value = rawInput;
+            document.getElementById('tickerInput').value = ''; 
+            fetchRealTimeData();
         }
 
-        function deleteWatchlistTicker(event, ticker) {
-            event.stopPropagation(); 
-            currentWatchlist = currentWatchlist.filter(item => item !== ticker);
+        function removeActiveTicker() {
+            const dropdown = document.getElementById('watchlistDropdown');
+            const targetToRemove = dropdown.value;
+            
+            if (!targetToRemove) return;
+            
+            currentWatchlist = currentWatchlist.filter(t => t !== targetToRemove);
+            
+            if (currentWatchlist.length === 0) {
+                currentWatchlist = [...baselinePreloadTickers];
+            }
+            
             localStorage.setItem('alpha_console_watchlist', JSON.stringify(currentWatchlist));
-            renderWatchlistUI();
+            renderDropdownUI();
+            fetchRealTimeData();
         }
 
         function toggleSettingsPanel() {
@@ -278,72 +340,22 @@
             return localStorage.getItem('alpha_console_finnhub_key') || "sandbox_c8m99ha23itactv8r44g";
         }
 
-        function selectLiveDte(dte, element) {
-            selectedDteValue = dte;
-            const container = document.getElementById('dteButtonsContainer');
-            
-            container.querySelectorAll('button').forEach(btn => {
-                btn.className = "bg-black border border-zinc-800 rounded-lg py-1.5 text-center transition-all relative";
-                const badge = btn.querySelector('span');
-                if (badge) badge.remove();
-                const textDiv = btn.querySelector('div');
-                if (textDiv) textDiv.className = "text-xs font-black text-zinc-300";
-            });
-
-            element.className = "bg-emerald-950/40 border-2 border-emerald-500 rounded-lg py-1.5 text-center transition-all relative";
-            const focusText = element.querySelector('div');
-            if (focusText) focusText.className = "text-xs font-black text-emerald-400";
-
-            const badgeDiv = document.createElement('span');
-            badgeDiv.className = "absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-[6px] px-1 rounded font-black tracking-tighter uppercase whitespace-nowrap";
-            badgeDiv.innerText = dte === 45 ? "AI OPT" : "CUSTOM";
-            element.appendChild(badgeDiv);
-
-            const timeLockText = dte <= 7 ? "2 Days" : (dte <= 15 ? "4 Days" : (dte === 30 ? "7 DTE" : "15 DTE"));
-            document.getElementById('timeoutDisplay').innerText = timeLockText;
-
-            let ticker = document.getElementById('tickerInput').value.trim().toUpperCase() || "QQQ";
-            adjustEstimatedUnitCost();
-            calculateLiveSizing();
-            evaluateOptionStrategy(ticker, globalLivePrice, currentCalculatedVol);
-        }
-
-        function selectLiveStrategy(strategyName, element) {
-            selectedStrategyValue = strategyName;
-            const container = document.getElementById('strategyButtonsContainer');
-            
-            container.querySelectorAll('button').forEach(btn => {
-                btn.className = "bg-black border border-zinc-800 rounded-lg py-1.5 text-center transition-all relative";
-                const badge = btn.querySelector('span');
-                if (badge) badge.remove();
-                const textDiv = btn.querySelector('div');
-                if (textDiv) textDiv.className = "text-xs font-black text-zinc-300";
-            });
-
-            element.className = "bg-emerald-950/40 border-2 border-emerald-500 rounded-lg py-1.5 text-center transition-all relative";
-            const focusText = element.querySelector('div');
-            if (focusText) focusText.className = "text-xs font-black text-emerald-400";
-
-            const badgeDiv = document.createElement('span');
-            badgeDiv.className = "absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-[6px] px-1 rounded font-black tracking-tighter uppercase whitespace-nowrap";
-            badgeDiv.innerText = "AI OPT";
-            element.appendChild(badgeDiv);
-
-            let ticker = document.getElementById('tickerInput').value.trim().toUpperCase() || "QQQ";
+        function executeRecalculationSequence() {
+            let ticker = document.getElementById('watchlistDropdown').value || "QQQ";
             adjustEstimatedUnitCost();
             calculateLiveSizing();
             evaluateOptionStrategy(ticker, globalLivePrice, currentCalculatedVol);
         }
 
         function adjustEstimatedUnitCost() {
-            let durationMultiplier = selectedDteValue / 45;
+            let durationMultiplier = computedDte / 45;
             let baseStrategyCost = globalLivePrice * 0.85;
 
-            if (selectedStrategyValue === "Strangle") {
+            if (computedStrategy === "Strangle") {
                 baseStrategyCost = globalLivePrice * 1.6;
-            } else if (selectedStrategyValue === "Call Spread") {
+            } else if (computedStrategy === "Call Spread") {
                 baseStrategyCost = globalLivePrice * 0.75;
-            } else if (selectedStrategyValue === "Iron Condor") {
+            } else if (computedStrategy === "Iron Condor") {
                 baseStrategyCost = globalLivePrice * 0.45; 
             }
 
@@ -358,16 +370,16 @@
         }
 
         async function fetchRealTimeData() {
-            let ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
-            if (!ticker) ticker = "QQQ";
-
-            appendToWatchlist(ticker);
+            let ticker = document.getElementById('watchlistDropdown').value || "QQQ";
 
             const overlay = document.getElementById('loadingOverlay');
             if (overlay) overlay.classList.remove('hidden');
 
             const currentKey = getStoredApiKey();
             const cacheBuster = new Date().getTime();
+
+            // Run automated matching algorithm calculations instantly
+            computeBestFitProfile(ticker);
 
             try {
                 const response = await fetch(`https://api.finnhub.io/api/v1/quote?symbol=${ticker}&token=${currentKey}&_cb=${cacheBuster}`);
@@ -394,7 +406,7 @@
                 evaluateOptionStrategy(ticker, globalLivePrice, currentCalculatedVol);
 
             } catch (error) {
-                console.error("Finnhub connectivity diagnostic fallback initiated", error);
+                console.error("Link Fallback Engine Ingest", error);
                 let fallbackPrice = ticker === "QQQ" ? 738.50 : 745.00;
                 globalLivePrice = fallbackPrice;
                 document.getElementById('livePriceBadge').innerText = `$${fallbackPrice.toFixed(2)}`;
@@ -412,14 +424,14 @@
             let callStrike = Math.round(price * 1.05); 
             let putStrike = Math.round(price * 0.95);  
 
-            if (selectedStrategyValue === "Strangle") {
+            if (computedStrategy === "Strangle") {
                 badgeText = "Vol Breakout";
                 legs = [
                     { type: "BUY Put", strike: `$${putStrike}`, delta: "0.30Δ", desc: "OTM downside shield" },
                     { type: "BUY Call", strike: `$${callStrike}`, delta: "0.30Δ", desc: "OTM variance capture" }
                 ];
                 mechanismText = "premium growth";
-            } else if (selectedStrategyValue === "Call Spread") {
+            } else if (computedStrategy === "Call Spread") {
                 badgeText = "Directional";
                 let spreadSellStrike = Math.round(price * 1.04);
                 legs = [
@@ -427,7 +439,7 @@
                     { type: "SELL Call", strike: `$${spreadSellStrike}`, delta: "0.28Δ", desc: "OTM theta protection" }
                 ];
                 mechanismText = "net spread value growth";
-            } else if (selectedStrategyValue === "Iron Condor") {
+            } else if (computedStrategy === "Iron Condor") {
                 badgeText = "Range Bound";
                 legs = [
                     { type: "BUY Put", strike: `$${Math.round(price * 0.92)}`, delta: "0.05Δ", desc: "Wing protector boundary" },
@@ -441,7 +453,7 @@
             const currentTimeLock = document.getElementById('timeoutDisplay').innerText || "15 DTE";
             const analysisSummary = `Plan for $${ticker}$: Take-Profit at +50% ${mechanismText}. Hard Stop protects capital at -30% drawdown. Mandatory execution closure if flat by ${currentTimeLock} to protect against final-stage theta.`;
 
-            document.getElementById('strategyTitle').innerText = selectedStrategyValue;
+            document.getElementById('strategyTitle').innerText = computedStrategy;
             document.getElementById('strategyTypeBadge').innerText = badgeText;
             document.getElementById('contextSummary').innerText = analysisSummary;
 
@@ -470,9 +482,9 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
             initWatchlistEngine();
             fetchRealTimeData(); 
+            setTimeout(() => { lucide.createIcons(); }, 50);
         });
     </script>
 </body>
