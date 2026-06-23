@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <title>Alpha Console</title>
     
-    <!-- iOS / PWA Meta Framework Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AlphaConsole">
-    <link rel="apple-touch-icon" href="https://placehold.co/192x192/000000/6366f1?text=A">
+    <link class="apple-touch-icon" href="https://placehold.co/192x192/000000/6366f1?text=A">
     <link rel="manifest" href="manifest.json">
     
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -25,15 +24,13 @@
 
     <div class="max-w-md mx-auto px-4 py-6 relative pb-12">
         
-        <!-- Settings Gear (Optimized Touch Target Zone) -->
         <div class="absolute top-6 right-4 z-40">
             <button onclick="toggleSettingsPanel()" class="text-zinc-100 active:scale-90 p-3 rounded-xl bg-zinc-900 border border-zinc-800 transition-all shadow-[0_0_15px_rgba(0,0,0,0.6)]">
                 <i data-lucide="settings" id="gearIcon" class="w-5 h-5 transition-transform duration-300"></i>
             </button>
         </div>
 
-        <!-- Header -->
-        <header class="text-center mb-6 pt-2">
+        <header class="text-left mb-6 pt-2">
             <div class="inline-flex items-center gap-1.5 bg-indigo-500/20 text-indigo-300 border border-indigo-500 rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-wider mb-2.5">
                 <i data-lucide="activity" class="w-3.5 h-3.5 animate-pulse text-emerald-400"></i> Live Feed Active
             </div>
@@ -42,7 +39,6 @@
             </h1>
         </header>
 
-        <!-- Configuration Key Drawer -->
         <div id="settingsPanel" class="bg-zinc-900 border-2 border-indigo-500 rounded-2xl p-4 shadow-2xl mb-6 hidden">
             <div class="flex items-center gap-2 mb-2">
                 <i data-lucide="key" class="w-4 h-4 text-indigo-400"></i>
@@ -64,10 +60,8 @@
             </div>
         </div>
 
-        <!-- Main Workspace Controls -->
         <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 shadow-xl mb-4 space-y-5">
             
-            <!-- Ticker & Capital Block -->
             <div class="space-y-4">
                 <div>
                     <label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Asset Ticker Symbol</label>
@@ -106,7 +100,6 @@
                 </div>
             </div>
 
-            <!-- Mobile-Friendly Touch Block DTE Buttons -->
             <div>
                 <label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Target Days To Expiration (DTE)</label>
                 <div class="grid grid-cols-4 gap-2">
@@ -131,7 +124,6 @@
             </div>
         </div>
 
-        <!-- Real-Time Metrics Status Strip -->
         <div class="grid grid-cols-2 gap-2 mb-4">
             <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex items-center gap-2.5">
                 <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
@@ -163,7 +155,6 @@
             </div>
         </div>
 
-        <!-- Strategy Layout Output Card -->
         <div class="bg-zinc-900 border-2 border-zinc-800 rounded-2xl shadow-2xl overflow-hidden relative">
             
             <div id="loadingOverlay" class="absolute inset-0 bg-black/90 z-50 flex flex-col items-center justify-center gap-2 hidden">
@@ -171,7 +162,6 @@
                 <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Querying Telemetry...</p>
             </div>
 
-            <!-- Banner Header -->
             <div class="p-4 border-b border-zinc-800 bg-zinc-950/60 flex justify-between items-center">
                 <div>
                     <div class="text-[9px] font-black text-indigo-400 uppercase tracking-widest mb-0.5">Architecture Matrix</div>
@@ -186,13 +176,10 @@
                 </div>
             </div>
 
-            <!-- Option Leg Output -->
             <div class="p-4 space-y-4">
                 <div class="space-y-2" id="legsContainer">
-                    <!-- Populated dynamically -->
-                </div>
+                    </div>
 
-                <!-- Hard Limits Panel -->
                 <div class="grid grid-cols-3 gap-2 text-center font-medium">
                     <div class="bg-emerald-950/30 border border-emerald-500/30 rounded-xl p-2.5">
                         <div class="text-emerald-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Target TP</div>
@@ -208,7 +195,6 @@
                     </div>
                 </div>
 
-                <!-- Insight Text -->
                 <div class="bg-black border border-zinc-800 rounded-xl p-3 flex items-start gap-2.5">
                     <i data-lucide="sparkles" class="w-4 h-4 text-indigo-400 mt-0.5 flex-shrink-0"></i>
                     <p id="contextSummary" class="text-[11px] text-zinc-400 leading-relaxed font-medium">
@@ -219,11 +205,10 @@
         </div>
     </div>
 
-    <!-- Core App Application Execution Logic Script -->
     <script>
         let globalLivePrice = 0;
         let globalEstimatedUnitCost = 450;
-        let selectedDteValue = 45; // Global memory tracking for dynamic premium multiplier scaling
+        let selectedDteValue = 45; 
 
         function toggleSettingsPanel() {
             const panel = document.getElementById('settingsPanel');
@@ -267,7 +252,6 @@
 
             document.getElementById('timeoutDisplay').innerText = dte <= 15 ? "1-2 Days" : (dte === 30 ? "7 DTE" : "15 DTE");
 
-            // CRITICAL FIX: Trigger dynamic premium scaling adjustment and size recalculation instantly
             let ticker = document.getElementById('tickerInput').value.trim().toUpperCase() || "QQQ";
             let vol = ticker === "QQQ" || ticker === "SPY" ? 34.2 : 24.5;
             adjustEstimatedUnitCost(vol);
@@ -275,7 +259,6 @@
         }
 
         function adjustEstimatedUnitCost(volatility) {
-            // Scales base premiums down for shorter duration windows (7, 15 DTE) to give accurate sizing matrices
             let durationMultiplier = selectedDteValue / 45;
             if (volatility > 30) {
                 globalEstimatedUnitCost = Math.max(120, Math.round((globalLivePrice * 1.6) * durationMultiplier)); 
@@ -330,7 +313,7 @@
                 let fallbackPrice = ticker === "QQQ" ? 738.50 : 745.00;
                 document.getElementById('livePriceBadge').innerText = `$${fallbackPrice.toFixed(2)}`;
                 evaluateOptionStrategy(ticker, fallbackPrice, 0.00, 34.2);
-            } biographical_exception_handling: finally {
+            } finally {
                 if (overlay) overlay.classList.add('hidden');
             }
         }
