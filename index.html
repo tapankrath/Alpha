@@ -5,216 +5,320 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <title>AlphaConsole</title>
     
+    <!-- iOS / PWA Meta Framework Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AlphaConsole">
     <link class="apple-touch-icon" href="https://placehold.co/192x192/000000/22c55e?text=A">
     
+    <!-- High-Stability Tailwind & Lucide Engine Assets -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
         * { -webkit-tap-highlight-color: transparent; }
         body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+        /* Smooth scrolling custom adjustments for the watchlist container */
+        .watchlist-scroll::-webkit-scrollbar { display: none; }
+        .watchlist-scroll { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-black text-white min-h-screen font-sans antialiased selection:bg-emerald-500/40">
 
-    <div class="max-w-md mx-auto relative pb-6">
+    <!-- MAIN TWO-COLUMN CONTAINER LAYOUT -->
+    <div class="flex max-w-4xl mx-auto relative min-h-screen">
         
-        <div class="sticky top-0 z-40 bg-black/95 pt-2 px-3 pb-2 border-b border-zinc-900/90 backdrop-blur-md space-y-2">
-            
-            <div class="flex items-center justify-between">
-                <header class="pt-0.5">
-                    <h1 class="text-2xl font-black tracking-tight normal-case">
-                        <span class="text-emerald-500">Alpha</span><span class="text-rose-500/80">Console</span>
-                    </h1>
-                </header>
-                <button onclick="toggleSettingsPanel()" class="text-zinc-400 active:scale-90 p-1.5 rounded-lg bg-zinc-900 border border-zinc-800 transition-all">
-                    <i data-lucide="settings" id="gearIcon" class="w-4 h-4 transition-transform duration-300"></i>
-                </button>
+        <!-- SIDEBAR DRAWER: WATCHLIST REGISTRY PANEL -->
+        <aside class="w-24 bg-zinc-950 border-r border-zinc-900/80 flex flex-col items-center py-3 sticky top-0 h-screen select-none">
+            <div class="text-[8px] font-black text-zinc-500 tracking-widest uppercase mb-3 border-b border-zinc-950 pb-1 w-full text-center">
+                Watchlist
             </div>
+            
+            <!-- Scrollable Asset Hub Stack -->
+            <div id="watchlistContainer" class="flex-1 w-full overflow-y-auto space-y-1 px-1.5 watchlist-scroll">
+                <!-- Dynamically populated from LocalStorage or preloaded dataset lists -->
+            </div>
+        </aside>
 
-            <div id="settingsPanel" class="bg-zinc-900 border border-emerald-500 rounded-xl p-3 shadow-2xl hidden">
-                <div class="flex items-center gap-2 mb-1.5">
-                    <i data-lucide="key" class="w-3.5 h-3.5 text-emerald-400"></i>
-                    <h3 class="text-[10px] font-black text-white uppercase tracking-wider">Finnhub Token Vault</h3>
-                </div>
-                <div class="flex gap-2">
-                    <input 
-                        type="password" 
-                        id="apiKeyInput" 
-                        placeholder="Private token"
-                        class="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 font-mono"
-                    >
-                    <button onclick="saveApiKey()" class="bg-emerald-600 active:bg-emerald-700 text-white font-black text-[10px] px-3 rounded-lg uppercase tracking-wider transition-all">
-                        Save
+        <!-- DASHBOARD CENTRAL VIEWPORT -->
+        <div class="flex-1 pb-6 min-w-0">
+            
+            <!-- ULTRA-COMPACT STICKY CONTROL DECK -->
+            <div class="sticky top-0 z-40 bg-black/95 pt-2 px-3 pb-2 border-b border-zinc-900/90 backdrop-blur-md space-y-2">
+                
+                <!-- Top Bar: Title & Settings Link -->
+                <div class="flex items-center justify-between">
+                    <header class="pt-0.5">
+                        <h1 class="text-2xl font-black tracking-tight normal-case">
+                            <span class="text-emerald-500">Alpha</span><span class="text-rose-500/80">Console</span>
+                        </h1>
+                    </header>
+                    <button onclick="toggleSettingsPanel()" class="text-zinc-400 active:scale-90 p-1.5 rounded-lg bg-zinc-900 border border-zinc-800 transition-all">
+                        <i data-lucide="settings" id="gearIcon" class="w-4 h-4 transition-transform duration-300"></i>
                     </button>
                 </div>
-            </div>
 
-            <div class="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-2.5 space-y-2">
-                
-                <div class="flex items-center gap-2 w-full">
-                    <div class="w-[22%]">
-                        <input 
-                            type="text" 
-                            id="tickerInput" 
-                            value="QQQ" 
-                            class="w-full bg-black border border-zinc-800 rounded-lg py-1.5 text-xs font-black text-white focus:outline-none focus:border-emerald-500 uppercase tracking-wider text-center"
-                        >
+                <!-- Collapsible API Key Drawer -->
+                <div id="settingsPanel" class="bg-zinc-900 border border-emerald-500 rounded-xl p-3 shadow-2xl hidden">
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <i data-lucide="key" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        <h3 class="text-[10px] font-black text-white uppercase tracking-wider">Finnhub Token Vault</h3>
                     </div>
-
-                    <div class="w-[18%]">
-                        <button onclick="fetchRealTimeData()" class="w-full bg-emerald-600 active:scale-95 text-white text-[10px] font-black py-2 rounded-lg flex items-center justify-center gap-0.5 transition-all">
-                            SCAN
+                    <div class="flex gap-2">
+                        <input 
+                            type="password" 
+                            id="apiKeyInput" 
+                            placeholder="Private token"
+                            class="flex-1 bg-black border border-zinc-800 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 font-mono"
+                        >
+                        <button onclick="saveApiKey()" class="bg-emerald-600 active:bg-emerald-700 text-white font-black text-[10px] px-3 rounded-lg uppercase tracking-wider transition-all">
+                            Save
                         </button>
                     </div>
+                </div>
 
-                    <div class="w-[60%] flex items-center bg-black border border-zinc-800 rounded-lg px-2 py-1.5 justify-between">
-                        <div class="flex items-center min-w-0">
-                            <span class="text-zinc-600 font-bold text-xs mr-0.5">$</span>
+                <!-- Dense Control Deck Console Matrix -->
+                <div class="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-2.5 space-y-2">
+                    
+                    <!-- Row 1: High Density Inline Inputs -->
+                    <div class="flex items-center gap-2 w-full">
+                        <!-- Asset Ticker -->
+                        <div class="w-[22%]">
                             <input 
-                                type="number" 
-                                id="capitalInput" 
-                                value="5000" 
-                                step="500"
-                                oninput="calculateLiveSizing()" 
-                                class="w-14 bg-transparent text-xs font-bold text-white focus:outline-none font-mono"
+                                type="text" 
+                                id="tickerInput" 
+                                value="QQQ" 
+                                class="w-full bg-black border border-zinc-800 rounded-lg py-1.5 text-xs font-black text-white focus:outline-none focus:border-emerald-500 uppercase tracking-wider text-center"
                             >
                         </div>
-                        <span id="allocationDisplay" class="text-[10px] font-black text-emerald-400 font-mono tracking-tighter">$5,000</span>
-                    </div>
-                </div>
 
-                <div class="flex items-center justify-between gap-1.5 bg-black/40 p-1 rounded-lg border border-zinc-900">
-                    <span class="text-[9px] font-black text-zinc-500 uppercase tracking-wider pl-1 whitespace-nowrap">DTE</span>
-                    <div class="grid grid-cols-4 gap-1 flex-1" id="dteButtonsContainer">
-                        <button onclick="selectLiveDte(7, this)" class="bg-black border border-zinc-800 rounded-md pt-2 pb-1 text-center text-xs font-black text-zinc-400 relative">
-                            <div>7</div><div class="text-[6px] text-zinc-600 tracking-tighter font-bold uppercase mt-0.5">WKLY</div>
-                        </button>
-                        <button onclick="selectLiveDte(15, this)" class="bg-black border border-zinc-800 rounded-md pt-2 pb-1 text-center text-xs font-black text-zinc-400 relative">
-                            <div>15</div><div class="text-[6px] text-zinc-600 tracking-tighter font-bold uppercase mt-0.5">BIWK</div>
-                        </button>
-                        <button onclick="selectLiveDte(30, this)" class="bg-black border border-zinc-800 rounded-md pt-2 pb-1 text-center text-xs font-black text-zinc-400 relative">
-                            <div>30</div><div class="text-[6px] text-zinc-600 tracking-tighter font-bold uppercase mt-0.5">MTH</div>
-                        </button>
-                        <button id="recommendedDteBtn" onclick="selectLiveDte(45, this)" class="bg-emerald-950/30 border border-emerald-500 rounded-md pt-2 pb-1 text-center text-xs font-black text-emerald-400 relative ring-1 ring-emerald-500/20">
-                            <span class="absolute -top-1.5 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-[5px] scale-90 px-1 rounded-sm font-black tracking-widest uppercase shadow-sm">AI OPT</span>
-                            <div>45</div><div class="text-[6px] text-emerald-400/70 tracking-tighter font-bold uppercase mt-0.5">STD</div>
-                        </button>
-                    </div>
-                </div>
+                        <!-- Compact Scan Button -->
+                        <div class="w-[18%]">
+                            <button onclick="fetchRealTimeData()" class="w-full bg-emerald-600 active:scale-95 text-white text-[10px] font-black py-2 rounded-lg flex items-center justify-center gap-0.5 transition-all">
+                                SCAN
+                            </button>
+                        </div>
 
-                <div class="flex items-center justify-between gap-1.5 bg-black/40 p-1 rounded-lg border border-zinc-900">
-                    <span class="text-[9px] font-black text-zinc-500 uppercase tracking-wider pl-1 whitespace-nowrap">STRAT</span>
-                    <div class="grid grid-cols-3 gap-1 flex-1" id="strategyButtonsContainer">
-                        <button id="stratBtn-Strangle" onclick="selectLiveStrategy('Strangle', this)" class="bg-emerald-950/30 border border-emerald-500 rounded-md pt-2 pb-1 text-[10px] font-black text-emerald-400 relative ring-1 ring-emerald-500/20">
-                            <span class="absolute -top-1.5 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-[5px] scale-90 px-1 rounded-sm font-black tracking-widest uppercase shadow-sm">AI OPT</span>
-                            <div>Strangle</div><div class="text-[6px] text-emerald-400/70 tracking-tighter font-bold uppercase mt-0.5">VOL BREAKOUT</div>
-                        </button>
-                        <button id="stratBtn-Spread" onclick="selectLiveStrategy('Call Spread', this)" class="bg-black border border-zinc-800 rounded-md pt-2 pb-1 text-[10px] font-black text-zinc-400 relative">
-                            <div>Call Spread</div><div class="text-[6px] text-zinc-600 tracking-tighter font-bold uppercase mt-0.5">DIRECTIONAL</div>
-                        </button>
-                        <button id="stratBtn-Condor" onclick="selectLiveStrategy('Iron Condor', this)" class="bg-black border border-zinc-800 rounded-md pt-2 pb-1 text-[10px] font-black text-zinc-400 relative">
-                            <div>Iron Condor</div><div class="text-[6px] text-zinc-600 tracking-tighter font-bold uppercase mt-0.5">RANGE BOUND</div>
-                        </button>
+                        <!-- Allocation Input Wrapper -->
+                        <div class="w-[60%] flex items-center bg-black border border-zinc-800 rounded-lg px-2 py-1.5 justify-between">
+                            <div class="flex items-center min-w-0">
+                                <span class="text-zinc-600 font-bold text-xs mr-0.5">$</span>
+                                <input 
+                                    type="number" 
+                                    id="capitalInput" 
+                                    value="5000" 
+                                    step="500"
+                                    oninput="calculateLiveSizing()" 
+                                    class="w-14 bg-transparent text-xs font-bold text-white focus:outline-none font-mono"
+                                >
+                            </div>
+                            <span id="allocationDisplay" class="text-[10px] font-black text-emerald-400 font-mono tracking-tighter">$5,000</span>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="px-3 mt-3 space-y-3">
-            
-            <div class="grid grid-cols-2 gap-1.5">
-                <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2 flex items-center gap-2">
-                    <i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-emerald-400"></i>
-                    <div>
-                        <p class="text-[7px] uppercase tracking-wider text-zinc-500 font-bold">Spot Price</p>
-                        <p id="livePriceBadge" class="text-xs font-black text-zinc-200">Loading...</p>
+                    <!-- Row 2: Micro DTE Horizontal Strips -->
+                    <div class="flex items-center justify-between gap-1.5 bg-black/40 p-1 rounded-lg border border-zinc-900">
+                        <span class="text-[9px] font-black text-zinc-500 uppercase tracking-wider pl-1 whitespace-nowrap">DTE</span>
+                        <div class="grid grid-cols-4 gap-1 flex-1" id="dteButtonsContainer">
+                            <button onclick="selectLiveDte(7, this)" class="bg-black border border-zinc-800 rounded-md pt-2 pb-1 text-center text-xs font-black text-zinc-400 relative">
+                                <div>7</div><div class="text-[6px] text-zinc-600 tracking-tighter font-bold uppercase mt-0.5">WKLY</div>
+                            </button>
+                            <button onclick="selectLiveDte(15, this)" class="bg-black border border-zinc-800 rounded-md pt-2 pb-1 text-center text-xs font-black text-zinc-400 relative">
+                                <div>15</div><div class="text-[6px] text-zinc-600 tracking-tighter font-bold uppercase mt-0.5">BIWK</div>
+                            </button>
+                            <button onclick="selectLiveDte(30, this)" class="bg-black border border-zinc-800 rounded-md pt-2 pb-1 text-center text-xs font-black text-zinc-400 relative">
+                                <div>30</div><div class="text-[6px] text-zinc-600 tracking-tighter font-bold uppercase mt-0.5">MTH</div>
+                            </button>
+                            <button id="recommendedDteBtn" onclick="selectLiveDte(45, this)" class="bg-emerald-950/30 border border-emerald-500 rounded-md pt-2 pb-1 text-center text-xs font-black text-emerald-400 relative ring-1 ring-emerald-500/20">
+                                <span class="absolute -top-1.5 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-[5px] scale-90 px-1 rounded-sm font-black tracking-widest uppercase shadow-sm">AI OPT</span>
+                                <div>45</div><div class="text-[6px] text-emerald-400/70 tracking-tighter font-bold uppercase mt-0.5">STD</div>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2 flex items-center gap-2">
-                    <i data-lucide="trending-up" class="w-3.5 h-3.5 text-emerald-400"></i>
-                    <div>
-                        <p class="text-[7px] uppercase tracking-wider text-zinc-500 font-bold">24H Change</p>
-                        <p id="liveChangeBadge" class="text-xs font-black text-zinc-200">--</p>
-                    </div>
-                </div>
-                <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2 flex items-center gap-2">
-                    <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-amber-400"></i>
-                    <div>
-                        <p class="text-[7px] uppercase tracking-wider text-zinc-500 font-bold">Calculated HV</p>
-                        <p id="liveVolBadge" class="text-xs font-black text-zinc-200">Tracking...</p>
-                    </div>
-                </div>
-                <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2 flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-teal-400"></i>
-                    <div>
-                        <p class="text-[7px] uppercase tracking-wider text-zinc-500 font-bold">Risk Guard</p>
-                        <p class="text-xs font-black text-teal-400">Hedge Safe</p>
+
+                    <!-- Row 3: Micro Strategy Selection Row -->
+                    <div class="flex items-center justify-between gap-1.5 bg-black/40 p-1 rounded-lg border border-zinc-900">
+                        <span class="text-[9px] font-black text-zinc-500 uppercase tracking-wider pl-1 whitespace-nowrap">STRAT</span>
+                        <div class="grid grid-cols-3 gap-1 flex-1" id="strategyButtonsContainer">
+                            <button id="stratBtn-Strangle" onclick="selectLiveStrategy('Strangle', this)" class="bg-emerald-950/30 border border-emerald-500 rounded-md pt-2 pb-1 text-[10px] font-black text-emerald-400 relative ring-1 ring-emerald-500/20">
+                                <span class="absolute -top-1.5 left-1/2 -translate-x-1/2 bg-emerald-500 text-black text-[5px] scale-90 px-1 rounded-sm font-black tracking-widest uppercase shadow-sm">AI OPT</span>
+                                <div>Strangle</div><div class="text-[6px] text-emerald-400/70 tracking-tighter font-bold uppercase mt-0.5">VOL BREAKOUT</div>
+                            </button>
+                            <button id="stratBtn-Spread" onclick="selectLiveStrategy('Call Spread', this)" class="bg-black border border-zinc-800 rounded-md pt-2 pb-1 text-[10px] font-black text-zinc-400 relative">
+                                <div>Call Spread</div><div class="text-[6px] text-zinc-600 tracking-tighter font-bold uppercase mt-0.5">DIRECTIONAL</div>
+                            </button>
+                            <button id="stratBtn-Condor" onclick="selectLiveStrategy('Iron Condor', this)" class="bg-black border border-zinc-800 rounded-md pt-2 pb-1 text-[10px] font-black text-zinc-400 relative">
+                                <div>Iron Condor</div><div class="text-[6px] text-zinc-600 tracking-tighter font-bold uppercase mt-0.5">RANGE BOUND</div>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden relative shadow-lg">
+            <!-- SCROLLABLE CONTENT VIEWPORT -->
+            <div class="px-3 mt-3 space-y-3">
                 
-                <div id="loadingOverlay" class="absolute inset-0 bg-black/95 z-50 flex flex-col items-center justify-center gap-1.5 hidden">
-                    <div class="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                    <p class="text-[8px] font-bold text-zinc-500 uppercase tracking-widest">Querying Telemetry...</p>
-                </div>
-
-                <div class="p-3 border-b border-zinc-800 bg-zinc-950/40 flex justify-between items-center">
-                    <div>
-                        <div class="text-[8px] font-black text-emerald-400 uppercase tracking-widest mb-0.5">Architecture Matrix</div>
-                        <div class="flex items-center gap-1.5">
-                            <h2 id="strategyTitle" class="text-base font-black text-white tracking-tight">Processing...</h2>
-                            <span id="strategyTypeBadge" class="text-[8px] font-bold bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20 uppercase tracking-wide">--</span>
+                <!-- Tighter Metrics Ribbon -->
+                <div class="grid grid-cols-2 gap-1.5">
+                    <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2 flex items-center gap-2">
+                        <i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        <div>
+                            <p class="text-[7px] uppercase tracking-wider text-zinc-500 font-bold">Spot Price</p>
+                            <p id="livePriceBadge" class="text-xs font-black text-zinc-200">Loading...</p>
                         </div>
                     </div>
-                    <div class="text-right bg-black px-2.5 py-1 rounded-lg border border-zinc-800">
-                        <div class="text-[7px] font-bold text-zinc-500 uppercase tracking-wider mb-0.5">Sizing</div>
-                        <div id="contractSizingDisplay" class="text-sm font-black text-emerald-400 font-mono">--</div>
-                    </div>
-                </div>
-
-                <div class="p-3 space-y-4">
-                    <div class="space-y-2.5" id="legsContainer">
-                        </div>
-
-                    <div class="grid grid-cols-3 gap-2 text-center">
-                        <div class="bg-emerald-950/20 border border-emerald-500/20 rounded-lg p-2">
-                            <div class="text-emerald-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Target TP</div>
-                            <div id="tpDisplay" class="text-sm font-black text-emerald-300 font-mono">50%</div>
-                        </div>
-                        <div class="bg-rose-950/10 border border-rose-500/20 rounded-lg p-2">
-                            <div class="text-rose-400/90 text-[8px] uppercase tracking-widest font-black mb-0.5">Stop Hard</div>
-                            <div id="slDisplay" class="text-sm font-black text-rose-400/90 font-mono">30%</div>
-                        </div>
-                        <div class="bg-amber-950/20 border border-amber-500/20 rounded-lg p-2">
-                            <div class="text-amber-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Time Lock</div>
-                            <div id="timeoutDisplay" class="text-sm font-black text-amber-300 font-mono">15 DTE</div>
+                    <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2 flex items-center gap-2">
+                        <i data-lucide="trending-up" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        <div>
+                            <p class="text-[7px] uppercase tracking-wider text-zinc-500 font-bold">24H Change</p>
+                            <p id="liveChangeBadge" class="text-xs font-black text-zinc-200">--</p>
                         </div>
                     </div>
-
-                    <div class="bg-black border border-zinc-800 rounded-lg p-2.5 flex items-start gap-2.5">
-                        <i data-lucide="sparkles" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
-                        <p id="contextSummary" class="text-xs text-zinc-300 leading-relaxed font-medium">
-                            Awaiting ingestion sequence...
-                        </p>
+                    <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2 flex items-center gap-2">
+                        <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-amber-400"></i>
+                        <div>
+                            <p class="text-[7px] uppercase tracking-wider text-zinc-500 font-bold">Calculated HV</p>
+                            <p id="liveVolBadge" class="text-xs font-black text-zinc-200">Tracking...</p>
+                        </div>
+                    </div>
+                    <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2 flex items-center gap-2">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5 text-teal-400"></i>
+                        <div>
+                            <p class="text-[7px] uppercase tracking-wider text-zinc-500 font-bold">Risk Guard</p>
+                            <p class="text-xs font-black text-teal-400">Hedge Safe</p>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Strategy Target Display Block -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden relative shadow-lg">
+                    
+                    <div id="loadingOverlay" class="absolute inset-0 bg-black/95 z-50 flex flex-col items-center justify-center gap-1.5 hidden">
+                        <div class="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                        <p class="text-[8px] font-bold text-zinc-500 uppercase tracking-widest">Querying Telemetry...</p>
+                    </div>
+
+                    <!-- Card Header Layout -->
+                    <div class="p-3 border-b border-zinc-800 bg-zinc-950/40 flex justify-between items-center">
+                        <div>
+                            <div class="text-[8px] font-black text-emerald-400 uppercase tracking-widest mb-0.5">Architecture Matrix</div>
+                            <div class="flex items-center gap-1.5">
+                                <h2 id="strategyTitle" class="text-base font-black text-white tracking-tight">Processing...</h2>
+                                <span id="strategyTypeBadge" class="text-[8px] font-bold bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20 uppercase tracking-wide">--</span>
+                            </div>
+                        </div>
+                        <div class="text-right bg-black px-2.5 py-1 rounded-lg border border-zinc-800">
+                            <div class="text-[7px] font-bold text-zinc-500 uppercase tracking-wider mb-0.5">Sizing</div>
+                            <div id="contractSizingDisplay" class="text-sm font-black text-emerald-400 font-mono">--</div>
+                        </div>
+                    </div>
+
+                    <!-- Output Display Areas -->
+                    <div class="p-3 space-y-4">
+                        <!-- HIGH CONTRAST LARGE FOV LEGS CONTAINER -->
+                        <div class="space-y-2.5" id="legsContainer">
+                            <!-- Populated dynamically with large typography matching high visual clarity metrics -->
+                        </div>
+
+                        <!-- Rules Parameters Row (Enlarged Values) -->
+                        <div class="grid grid-cols-3 gap-2 text-center">
+                            <div class="bg-emerald-950/20 border border-emerald-500/20 rounded-lg p-2">
+                                <div class="text-emerald-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Target TP</div>
+                                <div id="tpDisplay" class="text-sm font-black text-emerald-300 font-mono">50%</div>
+                            </div>
+                            <div class="bg-rose-950/10 border border-rose-500/20 rounded-lg p-2">
+                                <div class="text-rose-400/90 text-[8px] uppercase tracking-widest font-black mb-0.5">Stop Hard</div>
+                                <div id="slDisplay" class="text-sm font-black text-rose-400/90 font-mono">30%</div>
+                            </div>
+                            <div class="bg-amber-950/20 border border-amber-500/20 rounded-lg p-2">
+                                <div class="text-amber-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Time Lock</div>
+                                <div id="timeoutDisplay" class="text-sm font-black text-amber-300 font-mono">15 DTE</div>
+                            </div>
+                        </div>
+
+                        <!-- Text Explainer Core (Enlarged) -->
+                        <div class="bg-black border border-zinc-800 rounded-lg p-2.5 flex items-start gap-2.5">
+                            <i data-lucide="sparkles" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
+                            <p id="contextSummary" class="text-xs text-zinc-300 leading-relaxed font-medium">
+                                Awaiting ingestion sequence...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
-            
         </div>
     </div>
 
+    <!-- Core App Logic Engine Script -->
     <script>
         let globalLivePrice = 0;
         let globalEstimatedUnitCost = 450;
         let selectedDteValue = 45; 
         let selectedStrategyValue = "Strangle"; 
         let currentCalculatedVol = 34.2;
+
+        // Exact high-growth tech tickers loaded directly from Screenshot 2026-06-22 at 10.59.08 PM.png
+        const baselinePreloadTickers = [
+            "NVDA", "AAPL", "AMZN", "MSFT", "GOOG", "META", 
+            "TSLA", "ORCL", "AVGO", "NOW", "CRWD", "NFLX", 
+            "MU", "AMD", "SNDK", "SPCX"
+        ];
+        let currentWatchlist = [];
+
+        function initWatchlistEngine() {
+            const cached = localStorage.getItem('alpha_console_watchlist');
+            if (cached) {
+                currentWatchlist = JSON.parse(cached);
+            } else {
+                currentWatchlist = [...baselinePreloadTickers];
+                localStorage.setItem('alpha_console_watchlist', JSON.stringify(currentWatchlist));
+            }
+            renderWatchlistUI();
+        }
+
+        function renderWatchlistUI() {
+            const container = document.getElementById('watchlistContainer');
+            container.innerHTML = '';
+            
+            currentWatchlist.forEach(ticker => {
+                const elementRow = document.createElement('div');
+                elementRow.className = "group flex items-center justify-between w-full border-b border-zinc-900/60 py-2.5 px-2 hover:bg-zinc-900/40 rounded transition-all cursor-pointer";
+                elementRow.setAttribute('onclick', `selectWatchlistTicker('${ticker}')`);
+                
+                elementRow.innerHTML = `
+                    <span class="text-xs font-black tracking-wider text-zinc-200 group-hover:text-white transition-colors">${ticker}</span>
+                    <button onclick="deleteWatchlistTicker(event, '${ticker}')" class="text-zinc-600 hover:text-rose-500 px-1 font-bold text-xs transition-colors rounded">
+                        &times;
+                    </button>
+                `;
+                container.appendChild(elementRow);
+            });
+        }
+
+        function selectWatchlistTicker(ticker) {
+            document.getElementById('tickerInput').value = ticker;
+            fetchRealTimeData();
+        }
+
+        function appendToWatchlist(ticker) {
+            if (!ticker) return;
+            const absoluteTicker = ticker.toUpperCase().trim();
+            
+            // Avoid duplicate additions
+            if (currentWatchlist.includes(absoluteTicker)) return;
+            
+            currentWatchlist.unshift(absoluteTicker);
+            localStorage.setItem('alpha_console_watchlist', JSON.stringify(currentWatchlist));
+            renderWatchlistUI();
+        }
+
+        function deleteWatchlistTicker(event, ticker) {
+            event.stopPropagation(); // Avoid triggering standard execution selection
+            currentWatchlist = currentWatchlist.filter(item => item !== ticker);
+            localStorage.setItem('alpha_console_watchlist', JSON.stringify(currentWatchlist));
+            renderWatchlistUI();
+        }
 
         function toggleSettingsPanel() {
             const panel = document.getElementById('settingsPanel');
@@ -322,6 +426,9 @@
         async function fetchRealTimeData() {
             let ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
             if (!ticker) ticker = "QQQ";
+
+            // Push searched item safely into active layout watchlist
+            appendToWatchlist(ticker);
 
             const overlay = document.getElementById('loadingOverlay');
             if (overlay) overlay.classList.remove('hidden');
@@ -431,6 +538,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             lucide.createIcons();
+            initWatchlistEngine();
             fetchRealTimeData(); 
         });
     </script>
