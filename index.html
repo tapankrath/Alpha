@@ -62,57 +62,55 @@
             <!-- Control Deck Console Matrix -->
             <div class="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-3 space-y-3">
                 
-                <!-- Row 1: Primary Dropdown, Input Search, & Add/Delete Engine -->
-                <div class="flex items-center gap-2 w-full">
+                <!-- Row 1: Watchlist, Ticker, +/-, Allocation — all in one line -->
+                <div class="flex items-center gap-1.5 w-full">
                     <!-- Watchlist Selector -->
-                    <div class="w-[38%] relative">
+                    <div class="w-[26%] relative flex-shrink-0">
                         <select 
                             id="watchlistDropdown" 
                             onchange="selectDropdownTicker(this.value)"
-                            class="w-full bg-black border border-zinc-800 rounded-xl pl-3 pr-8 py-2.5 text-sm font-semibold text-white focus:outline-none focus:border-emerald-500 cursor-pointer"
+                            class="w-full bg-black border border-zinc-800 rounded-xl pl-3 pr-7 py-2.5 text-sm font-semibold text-white focus:outline-none focus:border-emerald-500 cursor-pointer"
                         >
                             <!-- Dynamically filled by initialization module -->
                         </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-zinc-500">
-                            <i data-lucide="layers" class="w-4 h-4"></i>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 text-zinc-500">
+                            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
                         </div>
                     </div>
 
                     <!-- Search Input Box -->
-                    <div class="w-[32%] relative">
+                    <div class="w-[20%] relative flex-shrink-0">
                         <input 
                             type="text" 
                             id="tickerInput" 
                             placeholder="Ticker" 
-                            class="w-full bg-black border border-zinc-800 rounded-xl px-3 py-2.5 text-sm font-semibold text-white focus:outline-none focus:border-emerald-500 text-center font-mono placeholder:text-zinc-600"
+                            class="w-full bg-black border border-zinc-800 rounded-xl px-2 py-2.5 text-sm font-semibold text-white focus:outline-none focus:border-emerald-500 text-center font-mono placeholder:text-zinc-600"
                         >
                     </div>
 
-                    <!-- Pure Icon Quick Actions Grid (+ / -) -->
-                    <div class="w-[30%] flex gap-1.5 justify-end">
-                        <button onclick="fetchCustomTicker()" class="flex-1 bg-emerald-950/40 border border-emerald-500/30 hover:border-emerald-500 text-emerald-400 font-bold py-2.5 rounded-xl text-lg active:scale-95 transition-all flex items-center justify-center">
+                    <!-- + / - Buttons -->
+                    <div class="flex gap-1 flex-shrink-0">
+                        <button onclick="fetchCustomTicker()" class="w-9 bg-emerald-950/40 border border-emerald-500/30 hover:border-emerald-500 text-emerald-400 font-bold py-2.5 rounded-xl text-lg active:scale-95 transition-all flex items-center justify-center">
                             +
                         </button>
-                        <button onclick="removeActiveTicker()" class="flex-1 bg-rose-950/20 border border-rose-500/20 hover:border-rose-500/50 text-rose-400 font-bold py-2.5 rounded-xl text-lg active:scale-95 transition-all flex items-center justify-center">
+                        <button onclick="removeActiveTicker()" class="w-9 bg-rose-950/20 border border-rose-500/20 hover:border-rose-500/50 text-rose-400 font-bold py-2.5 rounded-xl text-lg active:scale-95 transition-all flex items-center justify-center">
                             −
                         </button>
                     </div>
-                </div>
 
-                <!-- Row 2: Allocation Sizing Desk -->
-                <div class="w-full flex items-center bg-black border border-zinc-800 rounded-xl px-3 py-2.5 justify-between">
-                    <div class="flex items-center min-w-0">
-                        <span class="text-zinc-600 font-semibold text-sm mr-1">$</span>
+                    <!-- Allocation Field -->
+                    <div class="flex-1 flex items-center bg-black border border-zinc-800 rounded-xl px-2.5 py-2.5 min-w-0">
+                        <span class="text-zinc-600 font-semibold text-sm mr-1 flex-shrink-0">$</span>
                         <input 
                             type="number" 
                             id="capitalInput" 
                             value="5000" 
                             step="500"
                             oninput="executeRecalculationSequence()" 
-                            class="w-32 bg-transparent text-sm font-semibold text-white focus:outline-none font-mono"
+                            class="w-full bg-transparent text-sm font-semibold text-white focus:outline-none font-mono min-w-0"
                         >
+                        <span id="allocationDisplay" class="hidden"></span>
                     </div>
-                    <span id="allocationDisplay" class="text-xs font-semibold text-emerald-400 font-mono">$5,000</span>
                 </div>
 
                 <!-- Row 3: Strategy, Duration, and Unified Spot Price Layout -->
@@ -157,17 +155,17 @@
                 </div>
 
                 <!-- Card Header Layout -->
-                <div class="p-3 border-b border-zinc-800 bg-zinc-950/40 flex justify-between items-center">
-                    <div>
-                        <div class="text-[10px] font-semibold text-emerald-400 mb-0.5">Architecture Matrix</div>
-                        <div class="flex items-center gap-2">
-                            <h2 id="strategyTitle" class="text-base font-bold text-white">Processing...</h2>
-                            <span id="strategyTypeBadge" class="text-[9px] font-bold bg-amber-500/10 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20">--</span>
+                <div class="p-3 border-b border-zinc-800 bg-zinc-950/40">
+                    <div class="flex justify-between items-center mb-2.5">
+                        <div class="text-[10px] font-semibold text-emerald-400">Architecture Matrix</div>
+                        <div class="text-right bg-black px-2.5 py-1 rounded-lg border border-zinc-800">
+                            <div class="text-[8px] font-semibold text-zinc-500 mb-0.5">Sizing</div>
+                            <div id="contractSizingDisplay" class="text-sm font-bold text-emerald-400 font-mono">--</div>
                         </div>
                     </div>
-                    <div class="text-right bg-black px-2.5 py-1 rounded-lg border border-zinc-800">
-                        <div class="text-[8px] font-semibold text-zinc-500 mb-0.5">Sizing</div>
-                        <div id="contractSizingDisplay" class="text-sm font-bold text-emerald-400 font-mono">--</div>
+                    <!-- Strategy Selector Strip -->
+                    <div id="strategyStrip" class="flex gap-1.5 flex-wrap justify-center">
+                        <!-- Populated dynamically by renderStrategyStrip() -->
                     </div>
                 </div>
 
@@ -253,25 +251,95 @@
             }
         }
 
-        function computeBestFitProfile(ticker) {
+        // All known strategies with their DTE and badge label
+        const strategyProfiles = [
+            { name: "Strangle",    dte: 45, badge: "Vol Breakout",  label: "45 DTE" },
+            { name: "Call Spread", dte: 15, badge: "Directional",   label: "15 DTE" },
+            { name: "Iron Condor", dte: 30, badge: "Range Bound",   label: "30 DTE" },
+            { name: "Put Spread",  dte: 21, badge: "Bear Hedge",    label: "21 DTE" },
+        ];
+
+        function getRankedStrategies(ticker) {
+            // Returns all 4 strategies in ranked order for the given ticker
+            // Index 0 = best fit
             if (ticker === "QQQ" || ticker === "SPY") {
-                computedStrategy = "Strangle";
-                computedDte = 45;
+                return ["Strangle", "Iron Condor", "Put Spread", "Call Spread"];
             } else if (["NVDA", "TSLA", "AMD", "CRWD", "MU"].includes(ticker)) {
-                computedStrategy = "Call Spread";
-                computedDte = 15;
+                return ["Call Spread", "Strangle", "Put Spread", "Iron Condor"];
             } else {
-                computedStrategy = "Iron Condor";
-                computedDte = 30;
+                return ["Iron Condor", "Call Spread", "Put Spread", "Strangle"];
+            }
+        }
+
+        function computeBestFitProfile(ticker) {
+            const ranked = getRankedStrategies(ticker);
+            // Only set to best fit if user hasn't manually overridden for this ticker
+            if (!manualStrategyOverride) {
+                computedStrategy = ranked[0];
+                const profile = strategyProfiles.find(p => p.name === computedStrategy);
+                computedDte = profile ? profile.dte : 45;
             }
 
             const stratBox = document.getElementById('strategyStatusDisplay');
-            stratBox.innerText = computedStrategy;
-            
+            if (stratBox) stratBox.innerText = computedStrategy;
             document.getElementById('dteStatusDisplay').innerText = `${computedDte} DTE`;
 
             const timeLockText = computedDte <= 7 ? "2 Days" : (computedDte <= 15 ? "4 Days" : (computedDte === 30 ? "7 DTE" : "15 DTE"));
             document.getElementById('timeoutDisplay').innerText = timeLockText;
+
+            renderStrategyStrip(ticker);
+        }
+
+        const rankColors = [
+            { num: 'text-emerald-400', ring: 'bg-emerald-500/15 border-emerald-500/60', active: 'bg-emerald-500/15 border-emerald-500/60 text-emerald-400' },
+            { num: 'text-sky-400',     ring: 'bg-sky-500/10 border-sky-500/30',         active: 'bg-sky-500/10 border-sky-500/40 text-sky-300' },
+            { num: 'text-amber-400',   ring: 'bg-amber-500/10 border-amber-500/30',     active: 'bg-amber-500/10 border-amber-500/40 text-amber-300' },
+            { num: 'text-zinc-500',    ring: 'bg-zinc-900/60 border-zinc-700',          active: 'bg-zinc-800/80 border-zinc-600 text-zinc-300' },
+        ];
+
+        function renderStrategyStrip(ticker) {
+            const strip = document.getElementById('strategyStrip');
+            if (!strip) return;
+            const ranked = getRankedStrategies(ticker);
+            strip.innerHTML = '';
+
+            ranked.forEach((name, idx) => {
+                const profile = strategyProfiles.find(p => p.name === name);
+                const isActive = name === computedStrategy;
+                const rc = rankColors[idx];
+
+                const btn = document.createElement('button');
+                btn.onclick = () => selectStrategy(name, ticker);
+                btn.className = 'flex items-center gap-1.5 px-2 py-1.5 rounded-lg border text-xs font-bold transition-all active:scale-95 ' +
+                    (isActive ? rc.active : 'bg-zinc-900/40 border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-500');
+
+                btn.innerHTML = `
+                    <span class="text-[10px] font-black w-3.5 text-center ${isActive ? rc.num : 'text-zinc-400'}">#${idx + 1}</span>
+                    <span class="font-mono text-[10px] font-bold ${isActive ? '' : 'text-zinc-400'}">${profile ? profile.label : ''}</span>
+                    <span class="font-bold">${name}</span>
+                    ${isActive ? `<span class="w-1.5 h-1.5 rounded-full bg-current inline-block ml-0.5 opacity-80"></span>` : ''}
+                `;
+                strip.appendChild(btn);
+            });
+        }
+
+        let manualStrategyOverride = false;
+
+        function selectStrategy(name, ticker) {
+            const profile = strategyProfiles.find(p => p.name === name);
+            computedStrategy = name;
+            computedDte = profile ? profile.dte : 45;
+            manualStrategyOverride = true;
+
+            const timeLockText = computedDte <= 7 ? "2 Days" : (computedDte <= 15 ? "4 Days" : (computedDte === 30 ? "7 DTE" : "15 DTE"));
+            document.getElementById('timeoutDisplay').innerText = timeLockText;
+            document.getElementById('dteStatusDisplay').innerText = `${computedDte} DTE`;
+            const stratBox = document.getElementById('strategyStatusDisplay');
+            if (stratBox) stratBox.innerText = computedStrategy;
+
+            renderStrategyStrip(ticker || document.getElementById('watchlistDropdown').value || "QQQ");
+            adjustEstimatedUnitCost();
+            evaluateOptionStrategy(ticker || document.getElementById('watchlistDropdown').value || "QQQ", globalLivePrice, currentCalculatedVol);
         }
 
         function selectDropdownTicker(ticker) {
@@ -365,6 +433,7 @@
             const currentKey = getStoredApiKey();
             const cacheBuster = new Date().getTime();
 
+            manualStrategyOverride = false;
             computeBestFitProfile(ticker);
 
             try {
@@ -427,13 +496,23 @@
                     { type: "BUY Call", strike: `$${Math.round(price * 1.08)}`, delta: "0.05Δ", desc: "Wing protector boundary" }
                 ];
                 mechanismText = "credit decay harvesting";
+            } else if (computedStrategy === "Put Spread") {
+                badgeText = "Bear Hedge";
+                legs = [
+                    { type: "BUY Put", strike: `$${Math.round(price * 0.98)}`, delta: "0.45Δ", desc: "ATM downside anchor" },
+                    { type: "SELL Put", strike: `$${Math.round(price * 0.94)}`, delta: "0.20Δ", desc: "OTM cost reducer" }
+                ];
+                mechanismText = "directional put spread growth";
             }
 
             const currentTimeLock = document.getElementById('timeoutDisplay').innerText || "15 DTE";
             const analysisSummary = `Plan for $${ticker}$: Take-Profit at +50% ${mechanismText}. Hard Stop protects capital at -30% drawdown. Mandatory execution closure if flat by ${currentTimeLock} to protect against final-stage theta.`;
 
-            document.getElementById('strategyTitle').innerText = computedStrategy;
-            document.getElementById('strategyTypeBadge').innerText = badgeText;
+            const activeProfile = strategyProfiles.find(p => p.name === computedStrategy);
+            const el_title = document.getElementById('strategyTitle');
+            const el_badge = document.getElementById('strategyTypeBadge');
+            if (el_title) el_title.innerText = computedStrategy;
+            if (el_badge) el_badge.innerText = badgeText;
             document.getElementById('contextSummary').innerText = analysisSummary;
 
             const container = document.getElementById('legsContainer');
