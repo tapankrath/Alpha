@@ -5,48 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <title>AlphaConsole</title>
     
-    <!-- iOS / PWA Meta Framework Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AlphaConsole">
     <link class="apple-touch-icon" href="https://placehold.co/192x192/000000/22c55e?text=A">
     
-    <!-- High-Stability Tailwind & Lucide Engine Assets -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
         * { -webkit-tap-highlight-color: transparent; }
         body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
-        /* Smooth scrolling custom adjustments for the watchlist container */
-        .watchlist-scroll::-webkit-scrollbar { display: none; }
-        .watchlist-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Ultra-clean scrollbar suppression across all engines */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="bg-black text-white min-h-screen font-sans antialiased selection:bg-emerald-500/40">
 
-    <!-- MAIN TWO-COLUMN CONTAINER LAYOUT -->
-    <div class="flex max-w-4xl mx-auto relative min-h-screen">
+    <div class="flex flex-col md:flex-row max-w-5xl mx-auto relative min-h-screen">
         
-        <!-- SIDEBAR DRAWER: WATCHLIST REGISTRY PANEL -->
-        <aside class="w-24 bg-zinc-950 border-r border-zinc-900/80 flex flex-col items-center py-3 sticky top-0 h-screen select-none">
-            <div class="text-[8px] font-black text-zinc-500 tracking-widest uppercase mb-3 border-b border-zinc-950 pb-1 w-full text-center">
+        <aside class="w-full md:w-28 bg-zinc-950 border-b md:border-b-0 md:border-r border-zinc-900/80 flex flex-col pt-3 pb-2 md:pb-3 sticky top-0 z-50 md:h-screen select-none">
+            <div class="hidden md:block text-[8px] font-black text-zinc-500 tracking-widest uppercase mb-3 border-b border-zinc-900 pb-1.5 w-full text-center">
                 Watchlist
             </div>
             
-            <!-- Scrollable Asset Hub Stack -->
-            <div id="watchlistContainer" class="flex-1 w-full overflow-y-auto space-y-1 px-1.5 watchlist-scroll">
-                <!-- Dynamically populated from LocalStorage or preloaded dataset lists -->
-            </div>
+            <div id="watchlistContainer" class="flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto no-scrollbar gap-1.5 px-3 md:px-1.5 w-full">
+                </div>
         </aside>
 
-        <!-- DASHBOARD CENTRAL VIEWPORT -->
         <div class="flex-1 pb-6 min-w-0">
             
-            <!-- ULTRA-COMPACT STICKY CONTROL DECK -->
             <div class="sticky top-0 z-40 bg-black/95 pt-2 px-3 pb-2 border-b border-zinc-900/90 backdrop-blur-md space-y-2">
                 
-                <!-- Top Bar: Title & Settings Link -->
                 <div class="flex items-center justify-between">
                     <header class="pt-0.5">
                         <h1 class="text-2xl font-black tracking-tight normal-case">
@@ -58,7 +49,6 @@
                     </button>
                 </div>
 
-                <!-- Collapsible API Key Drawer -->
                 <div id="settingsPanel" class="bg-zinc-900 border border-emerald-500 rounded-xl p-3 shadow-2xl hidden">
                     <div class="flex items-center gap-2 mb-1.5">
                         <i data-lucide="key" class="w-3.5 h-3.5 text-emerald-400"></i>
@@ -77,12 +67,9 @@
                     </div>
                 </div>
 
-                <!-- Dense Control Deck Console Matrix -->
                 <div class="bg-zinc-900/60 border border-zinc-800/60 rounded-xl p-2.5 space-y-2">
                     
-                    <!-- Row 1: High Density Inline Inputs -->
                     <div class="flex items-center gap-2 w-full">
-                        <!-- Asset Ticker -->
                         <div class="w-[22%]">
                             <input 
                                 type="text" 
@@ -92,14 +79,12 @@
                             >
                         </div>
 
-                        <!-- Compact Scan Button -->
                         <div class="w-[18%]">
                             <button onclick="fetchRealTimeData()" class="w-full bg-emerald-600 active:scale-95 text-white text-[10px] font-black py-2 rounded-lg flex items-center justify-center gap-0.5 transition-all">
                                 SCAN
                             </button>
                         </div>
 
-                        <!-- Allocation Input Wrapper -->
                         <div class="w-[60%] flex items-center bg-black border border-zinc-800 rounded-lg px-2 py-1.5 justify-between">
                             <div class="flex items-center min-w-0">
                                 <span class="text-zinc-600 font-bold text-xs mr-0.5">$</span>
@@ -116,7 +101,6 @@
                         </div>
                     </div>
 
-                    <!-- Row 2: Micro DTE Horizontal Strips -->
                     <div class="flex items-center justify-between gap-1.5 bg-black/40 p-1 rounded-lg border border-zinc-900">
                         <span class="text-[9px] font-black text-zinc-500 uppercase tracking-wider pl-1 whitespace-nowrap">DTE</span>
                         <div class="grid grid-cols-4 gap-1 flex-1" id="dteButtonsContainer">
@@ -136,7 +120,6 @@
                         </div>
                     </div>
 
-                    <!-- Row 3: Micro Strategy Selection Row -->
                     <div class="flex items-center justify-between gap-1.5 bg-black/40 p-1 rounded-lg border border-zinc-900">
                         <span class="text-[9px] font-black text-zinc-500 uppercase tracking-wider pl-1 whitespace-nowrap">STRAT</span>
                         <div class="grid grid-cols-3 gap-1 flex-1" id="strategyButtonsContainer">
@@ -155,10 +138,8 @@
                 </div>
             </div>
 
-            <!-- SCROLLABLE CONTENT VIEWPORT -->
             <div class="px-3 mt-3 space-y-3">
                 
-                <!-- Tighter Metrics Ribbon -->
                 <div class="grid grid-cols-2 gap-1.5">
                     <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2 flex items-center gap-2">
                         <i data-lucide="dollar-sign" class="w-3.5 h-3.5 text-emerald-400"></i>
@@ -190,7 +171,6 @@
                     </div>
                 </div>
 
-                <!-- Strategy Target Display Block -->
                 <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden relative shadow-lg">
                     
                     <div id="loadingOverlay" class="absolute inset-0 bg-black/95 z-50 flex flex-col items-center justify-center gap-1.5 hidden">
@@ -198,7 +178,6 @@
                         <p class="text-[8px] font-bold text-zinc-500 uppercase tracking-widest">Querying Telemetry...</p>
                     </div>
 
-                    <!-- Card Header Layout -->
                     <div class="p-3 border-b border-zinc-800 bg-zinc-950/40 flex justify-between items-center">
                         <div>
                             <div class="text-[8px] font-black text-emerald-400 uppercase tracking-widest mb-0.5">Architecture Matrix</div>
@@ -213,14 +192,10 @@
                         </div>
                     </div>
 
-                    <!-- Output Display Areas -->
                     <div class="p-3 space-y-4">
-                        <!-- HIGH CONTRAST LARGE FOV LEGS CONTAINER -->
                         <div class="space-y-2.5" id="legsContainer">
-                            <!-- Populated dynamically with large typography matching high visual clarity metrics -->
-                        </div>
+                            </div>
 
-                        <!-- Rules Parameters Row (Enlarged Values) -->
                         <div class="grid grid-cols-3 gap-2 text-center">
                             <div class="bg-emerald-950/20 border border-emerald-500/20 rounded-lg p-2">
                                 <div class="text-emerald-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Target TP</div>
@@ -236,7 +211,6 @@
                             </div>
                         </div>
 
-                        <!-- Text Explainer Core (Enlarged) -->
                         <div class="bg-black border border-zinc-800 rounded-lg p-2.5 flex items-start gap-2.5">
                             <i data-lucide="sparkles" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
                             <p id="contextSummary" class="text-xs text-zinc-300 leading-relaxed font-medium">
@@ -250,7 +224,6 @@
         </div>
     </div>
 
-    <!-- Core App Logic Engine Script -->
     <script>
         let globalLivePrice = 0;
         let globalEstimatedUnitCost = 450;
@@ -258,11 +231,9 @@
         let selectedStrategyValue = "Strangle"; 
         let currentCalculatedVol = 34.2;
 
-        // Exact high-growth tech tickers loaded directly from Screenshot 2026-06-22 at 10.59.08 PM.png
         const baselinePreloadTickers = [
-            "NVDA", "AAPL", "AMZN", "MSFT", "GOOG", "META", 
-            "TSLA", "ORCL", "AVGO", "NOW", "CRWD", "NFLX", 
-            "MU", "AMD", "SNDK", "SPCX"
+            "QQQ", "SPY", "NVDA", "AAPL", "AMZN", "MSFT", "GOOG", "META", 
+            "TSLA", "ORCL", "AVGO", "NOW", "CRWD", "NFLX", "MU", "AMD"
         ];
         let currentWatchlist = [];
 
@@ -283,12 +254,13 @@
             
             currentWatchlist.forEach(ticker => {
                 const elementRow = document.createElement('div');
-                elementRow.className = "group flex items-center justify-between w-full border-b border-zinc-900/60 py-2.5 px-2 hover:bg-zinc-900/40 rounded transition-all cursor-pointer";
+                // Added flex-shrink-0 for mobile row layout protection
+                elementRow.className = "flex-shrink-0 flex items-center justify-between border border-zinc-800 md:border-0 md:border-b md:border-zinc-900/60 py-1.5 md:py-2.5 px-2.5 md:px-2 bg-zinc-900/40 md:bg-transparent hover:bg-zinc-900/80 rounded-lg md:rounded-none transition-all cursor-pointer min-w-[70px] md:min-w-0";
                 elementRow.setAttribute('onclick', `selectWatchlistTicker('${ticker}')`);
                 
                 elementRow.innerHTML = `
-                    <span class="text-xs font-black tracking-wider text-zinc-200 group-hover:text-white transition-colors">${ticker}</span>
-                    <button onclick="deleteWatchlistTicker(event, '${ticker}')" class="text-zinc-600 hover:text-rose-500 px-1 font-bold text-xs transition-colors rounded">
+                    <span class="text-[11px] md:text-xs font-black tracking-wider text-zinc-200">${ticker}</span>
+                    <button onclick="deleteWatchlistTicker(event, '${ticker}')" class="text-zinc-500 hover:text-rose-500 ml-2 md:ml-1 font-bold text-xs transition-colors">
                         &times;
                     </button>
                 `;
@@ -298,14 +270,13 @@
 
         function selectWatchlistTicker(ticker) {
             document.getElementById('tickerInput').value = ticker;
+            // Scans without forcing strategy override state reset
             fetchRealTimeData();
         }
 
         function appendToWatchlist(ticker) {
             if (!ticker) return;
             const absoluteTicker = ticker.toUpperCase().trim();
-            
-            // Avoid duplicate additions
             if (currentWatchlist.includes(absoluteTicker)) return;
             
             currentWatchlist.unshift(absoluteTicker);
@@ -314,7 +285,7 @@
         }
 
         function deleteWatchlistTicker(event, ticker) {
-            event.stopPropagation(); // Avoid triggering standard execution selection
+            event.stopPropagation(); 
             currentWatchlist = currentWatchlist.filter(item => item !== ticker);
             localStorage.setItem('alpha_console_watchlist', JSON.stringify(currentWatchlist));
             renderWatchlistUI();
@@ -349,7 +320,6 @@
                 btn.className = "bg-black border border-zinc-800 rounded-md pt-2 pb-1 text-center text-xs font-black text-zinc-400 relative";
                 const badge = btn.querySelector('span');
                 if (badge) badge.remove();
-                
                 const labelDiv = btn.querySelectorAll('div')[1];
                 if (labelDiv) labelDiv.className = "text-[6px] text-zinc-600 tracking-tighter font-bold uppercase mt-0.5";
             });
@@ -381,7 +351,6 @@
                 btn.className = "bg-black border border-zinc-800 rounded-md pt-2 pb-1 text-center text-[10px] font-black text-zinc-400 relative";
                 const badge = btn.querySelector('span');
                 if (badge) badge.remove();
-                
                 const labelDiv = btn.querySelectorAll('div')[1];
                 if (labelDiv) labelDiv.className = "text-[6px] text-zinc-600 tracking-tighter font-bold uppercase mt-0.5";
             });
@@ -427,7 +396,6 @@
             let ticker = document.getElementById('tickerInput').value.trim().toUpperCase();
             if (!ticker) ticker = "QQQ";
 
-            // Push searched item safely into active layout watchlist
             appendToWatchlist(ticker);
 
             const overlay = document.getElementById('loadingOverlay');
