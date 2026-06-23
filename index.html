@@ -102,18 +102,25 @@
                     </button>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-3 gap-2">
                     <div class="space-y-1">
-                        <label class="text-[8px] font-black text-zinc-500 uppercase tracking-widest block pl-0.5">AI Best-Fit Strategy</label>
-                        <div id="strategyStatusDisplay" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs font-black tracking-wider uppercase text-emerald-400 font-mono">
+                        <label class="text-[8px] font-black text-zinc-500 uppercase tracking-widest block pl-0.5">Strategy</label>
+                        <div id="strategyStatusDisplay" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs font-black tracking-wider uppercase text-emerald-400 font-mono truncate text-center">
                             --
                         </div>
                     </div>
 
                     <div class="space-y-1">
-                        <label class="text-[8px] font-black text-zinc-500 uppercase tracking-widest block pl-0.5">Optimal Duration Plan</label>
-                        <div id="dteStatusDisplay" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs font-black tracking-wider uppercase text-zinc-300 font-mono">
+                        <label class="text-[8px] font-black text-zinc-500 uppercase tracking-widest block pl-0.5">Duration</label>
+                        <div id="dteStatusDisplay" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs font-black tracking-wider uppercase text-zinc-300 font-mono text-center">
                             --
+                        </div>
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="text-[8px] font-black text-zinc-500 uppercase tracking-widest block pl-0.5">Spot Price</label>
+                        <div id="livePriceBadge" class="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs font-black tracking-wider uppercase text-white font-mono text-center">
+                            Loading...
                         </div>
                     </div>
                 </div>
@@ -123,37 +130,6 @@
 
         <div class="mt-3 space-y-3 flex-1">
             
-            <div class="grid grid-cols-2 gap-2">
-                <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2">
-                    <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
-                    <div>
-                        <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Spot Price</p>
-                        <p id="livePriceBadge" class="text-xs font-black text-zinc-200">Loading...</p>
-                    </div>
-                </div>
-                <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2">
-                    <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
-                    <div>
-                        <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">24H Change</p>
-                        <p id="liveChangeBadge" class="text-xs font-black text-zinc-200">--</p>
-                    </div>
-                </div>
-                <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2">
-                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-amber-400"></i>
-                    <div>
-                        <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Calculated HV</p>
-                        <p id="liveVolBadge" class="text-xs font-black text-zinc-200">Tracking...</p>
-                    </div>
-                </div>
-                <div class="bg-zinc-900 border border-zinc-800/80 rounded-xl p-2.5 flex items-center gap-2">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-teal-400"></i>
-                    <div>
-                        <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Risk Guard</p>
-                        <p class="text-xs font-black text-teal-400">Hedge Safe</p>
-                    </div>
-                </div>
-            </div>
-
             <div class="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden relative shadow-lg">
                 
                 <div id="loadingOverlay" class="absolute inset-0 bg-black/95 z-50 flex flex-col items-center justify-center gap-2 hidden">
@@ -211,7 +187,6 @@
         let globalEstimatedUnitCost = 450;
         let currentCalculatedVol = 34.2;
 
-        // Current automated recommendations state computed from active asset profile
         let computedStrategy = "Strangle";
         let computedDte = 45;
 
@@ -252,34 +227,27 @@
             }
         }
 
-        // AUTOMATED RECO ENGINE CONFIG MATRIX
         function computeBestFitProfile(ticker) {
-            // 1. Core Macro Indices -> Long Non-Directional Strangles
+            // Force strict global matching rules matching your non-directional model layout
             if (ticker === "QQQ" || ticker === "SPY") {
                 computedStrategy = "Strangle";
                 computedDte = 45;
-            } 
-            // 2. Ultra High Beta Growth Volatility Momentum -> Short-Duration Call Spreads
-            else if (["NVDA", "TSLA", "AMD", "CRWD", "MU"].includes(ticker)) {
+            } else if (["NVDA", "TSLA", "AMD", "CRWD", "MU"].includes(ticker)) {
                 computedStrategy = "Call Spread";
                 computedDte = 15;
-            } 
-            // 3. Mega Cap Cash-Flow Stability Range -> Iron Condors
-            else {
+            } else {
                 computedStrategy = "Iron Condor";
                 computedDte = 30;
             }
 
-            // Render updated metrics straight into the UI matrix elements
             const stratBox = document.getElementById('strategyStatusDisplay');
             stratBox.innerText = computedStrategy;
-            if(computedStrategy === "Strangle") stratBox.className = "w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs font-black tracking-wider uppercase text-emerald-400 font-mono";
-            else if(computedStrategy === "Call Spread") stratBox.className = "w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs font-black tracking-wider uppercase text-zinc-300 font-mono";
-            else stratBox.className = "w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-xs font-black tracking-wider uppercase text-amber-400 font-mono";
+            if(computedStrategy === "Strangle") stratBox.className = "w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs font-black tracking-wider uppercase text-emerald-400 font-mono text-center";
+            else if(computedStrategy === "Call Spread") stratBox.className = "w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs font-black tracking-wider uppercase text-zinc-300 font-mono text-center";
+            else stratBox.className = "w-full bg-zinc-950 border border-zinc-800 rounded-lg px-2.5 py-2 text-xs font-black tracking-wider uppercase text-amber-400 font-mono text-center";
 
             document.getElementById('dteStatusDisplay').innerText = `${computedDte} DTE`;
 
-            // Adjust parameters row timing indicators
             const timeLockText = computedDte <= 7 ? "2 Days" : (computedDte <= 15 ? "4 Days" : (computedDte === 30 ? "7 DTE" : "15 DTE"));
             document.getElementById('timeoutDisplay').innerText = timeLockText;
         }
@@ -306,11 +274,9 @@
         function removeActiveTicker() {
             const dropdown = document.getElementById('watchlistDropdown');
             const targetToRemove = dropdown.value;
-            
             if (!targetToRemove) return;
             
             currentWatchlist = currentWatchlist.filter(t => t !== targetToRemove);
-            
             if (currentWatchlist.length === 0) {
                 currentWatchlist = [...baselinePreloadTickers];
             }
@@ -336,6 +302,7 @@
             }
         }
 
+        // Vault Fallback System
         function getStoredApiKey() {
             return localStorage.getItem('alpha_console_finnhub_key') || "sandbox_c8m99ha23itactv8r44g";
         }
@@ -371,14 +338,12 @@
 
         async function fetchRealTimeData() {
             let ticker = document.getElementById('watchlistDropdown').value || "QQQ";
-
             const overlay = document.getElementById('loadingOverlay');
             if (overlay) overlay.classList.remove('hidden');
 
             const currentKey = getStoredApiKey();
             const cacheBuster = new Date().getTime();
 
-            // Run automated matching algorithm calculations instantly
             computeBestFitProfile(ticker);
 
             try {
@@ -386,8 +351,6 @@
                 const data = await response.json();
                 
                 globalLivePrice = data.c;
-                const changePercent = data.dp || 0.0;
-
                 if (!globalLivePrice || globalLivePrice === 0) {
                     if (ticker === "QQQ") globalLivePrice = 738.50;
                     else if (ticker === "SPY") globalLivePrice = 745.00;
@@ -395,18 +358,13 @@
                 }
 
                 document.getElementById('livePriceBadge').innerText = `$${globalLivePrice.toFixed(2)}`;
-                const changeBadge = document.getElementById('liveChangeBadge');
-                changeBadge.innerText = `${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`;
-                changeBadge.className = `text-xs font-black ${changePercent >= 0 ? 'text-emerald-400' : 'text-rose-400/90'}`;
-                
                 currentCalculatedVol = ticker === "QQQ" || ticker === "SPY" ? 34.2 : 24.5;
-                document.getElementById('liveVolBadge').innerText = `HV ${currentCalculatedVol.toFixed(1)}%`;
                 
                 adjustEstimatedUnitCost();
                 evaluateOptionStrategy(ticker, globalLivePrice, currentCalculatedVol);
 
             } catch (error) {
-                console.error("Link Fallback Engine Ingest", error);
+                console.error("Telemetry Endpoint Intercept", error);
                 let fallbackPrice = ticker === "QQQ" ? 738.50 : 745.00;
                 globalLivePrice = fallbackPrice;
                 document.getElementById('livePriceBadge').innerText = `$${fallbackPrice.toFixed(2)}`;
