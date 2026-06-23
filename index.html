@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-    <title>Alpha Console</title>
+    <title>AlphaConsole</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -22,199 +22,206 @@
 </head>
 <body class="bg-black text-white min-h-screen font-sans antialiased selection:bg-emerald-500/40">
 
-    <div class="max-w-md mx-auto px-4 py-6 relative pb-12">
+    <div class="max-w-md mx-auto relative pb-12">
         
-        <div class="absolute top-6 right-4 z-40">
-            <button onclick="toggleSettingsPanel()" class="text-zinc-100 active:scale-90 p-3 rounded-xl bg-zinc-900 border border-zinc-800 transition-all shadow-[0_0_15px_rgba(0,0,0,0.6)]">
-                <i data-lucide="settings" id="gearIcon" class="w-5 h-5 transition-transform duration-300"></i>
-            </button>
-        </div>
-
-        <header class="text-left mb-6 pt-2">
-            <h1 class="text-3xl font-black tracking-tight bg-gradient-to-r from-emerald-400 to-amber-300 bg-clip-text text-transparent">
-                ALPHA CONSOLE
-            </h1>
-        </header>
-
-        <div id="settingsPanel" class="bg-zinc-900 border-2 border-emerald-500 rounded-2xl p-4 shadow-2xl mb-6 hidden">
-            <div class="flex items-center gap-2 mb-2">
-                <i data-lucide="key" class="w-4 h-4 text-emerald-400"></i>
-                <h3 class="text-xs font-black text-white uppercase tracking-wider">Finnhub API Authentication</h3>
-            </div>
-            <div class="flex flex-col gap-2">
-                <input 
-                    type="password" 
-                    id="apiKeyInput" 
-                    placeholder="Paste private Finnhub token here"
-                    class="w-full bg-black border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500 font-mono"
-                >
-                <button onclick="saveApiKey()" class="w-full bg-emerald-600 active:bg-emerald-700 text-white font-black text-xs py-3.5 rounded-xl uppercase tracking-wider transition-all">
-                    Save Client Key
+        <div class="sticky top-0 z-40 bg-black pt-4 px-4 pb-2 border-b border-zinc-900/80 backdrop-blur-md">
+            
+            <div class="absolute top-4 right-4 z-50">
+                <button onclick="toggleSettingsPanel()" class="text-zinc-100 active:scale-90 p-3 rounded-xl bg-zinc-900 border border-zinc-800 transition-all shadow-[0_0_15px_rgba(0,0,0,0.6)]">
+                    <i data-lucide="settings" id="gearIcon" class="w-5 h-5 transition-transform duration-300"></i>
                 </button>
             </div>
-            <div id="saveFeedback" class="text-[11px] text-emerald-400 font-bold mt-2 hidden flex items-center gap-1">
-                <i data-lucide="check" class="w-3 h-3"></i> Token vaulted. Reloading data core...
-            </div>
-        </div>
 
-        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 shadow-xl mb-4 space-y-4">
-            
-            <div class="flex items-end gap-2 w-full">
-                <div class="w-[28%]">
-                    <label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Asset</label>
-                    <input 
-                        type="text" 
-                        id="tickerInput" 
-                        value="QQQ" 
-                        class="w-full bg-black border-2 border-zinc-800 rounded-xl px-2 py-3 text-sm font-black text-white focus:outline-none focus:border-emerald-500 uppercase tracking-widest transition-all text-center"
-                    >
+            <header class="text-left mb-4 pt-1">
+                <h1 class="text-3xl font-black tracking-tight normal-case">
+                    <span class="text-emerald-500">Alpha</span><span class="text-rose-500/80">Console</span>
+                </h1>
+            </header>
+
+            <div id="settingsPanel" class="bg-zinc-900 border-2 border-emerald-500 rounded-2xl p-4 shadow-2xl mb-4 hidden">
+                <div class="flex items-center gap-2 mb-2">
+                    <i data-lucide="key" class="w-4 h-4 text-emerald-400"></i>
+                    <h3 class="text-xs font-black text-white uppercase tracking-wider">Finnhub API Authentication</h3>
                 </div>
-
-                <div class="w-[24%]">
-                    <button onclick="fetchRealTimeData()" class="w-full bg-emerald-600 active:scale-95 text-white text-xs font-black py-3.5 rounded-xl flex items-center justify-center gap-1 transition-all uppercase tracking-wider shadow-md">
-                        SCAN <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                <div class="flex flex-col gap-2">
+                    <input 
+                        type="password" 
+                        id="apiKeyInput" 
+                        placeholder="Paste private Finnhub token here"
+                        class="w-full bg-black border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-emerald-500 font-mono"
+                    >
+                    <button onclick="saveApiKey()" class="w-full bg-emerald-600 active:bg-emerald-700 text-white font-black text-xs py-3.5 rounded-xl uppercase tracking-wider transition-all">
+                        Save Client Key
                     </button>
                 </div>
+                <div id="saveFeedback" class="text-[11px] text-emerald-400 font-bold mt-2 hidden flex items-center gap-1">
+                    <i data-lucide="check" class="w-3 h-3"></i> Token vaulted. Reloading data core...
+                </div>
+            </div>
 
-                <div class="w-[48%]">
-                    <div class="flex justify-between items-center mb-1.5 px-0.5">
-                        <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Allocation</label>
-                        <span id="allocationDisplay" class="text-xs font-black text-emerald-400 font-mono">$5,000</span>
-                    </div>
-                    <div class="relative flex items-center bg-black border-2 border-zinc-800 rounded-xl px-3 py-3">
-                        <span class="text-zinc-500 font-bold mr-1 text-sm">$</span>
+            <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 shadow-xl space-y-4">
+                
+                <div class="flex items-end gap-2 w-full">
+                    <div class="w-[28%]">
+                        <label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Asset</label>
                         <input 
-                            type="number" 
-                            id="capitalInput" 
-                            value="5000" 
-                            step="500"
-                            oninput="calculateLiveSizing()" 
-                            class="w-full bg-transparent text-sm font-bold text-white focus:outline-none font-mono"
+                            type="text" 
+                            id="tickerInput" 
+                            value="QQQ" 
+                            class="w-full bg-black border-2 border-zinc-800 rounded-xl px-2 py-3 text-sm font-black text-white focus:outline-none focus:border-emerald-500 uppercase tracking-widest transition-all text-center"
                         >
                     </div>
-                </div>
-            </div>
 
-            <div class="pt-1">
-                <label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Target Days To Expiration (DTE)</label>
-                <div class="grid grid-cols-4 gap-2">
-                    <button onclick="selectLiveDte(7, this)" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
-                        <span class="block text-sm font-black text-zinc-200">7</span>
-                        <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Wkly</span>
-                    </button>
-                    <button onclick="selectLiveDte(15, this)" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
-                        <span class="block text-sm font-black text-zinc-200">15</span>
-                        <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">BiWk</span>
-                    </button>
-                    <button onclick="selectLiveDte(30, this)" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
-                        <span class="block text-sm font-black text-zinc-200">30</span>
-                        <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Mth</span>
-                    </button>
-                    <button id="recommendedDteBtn" onclick="selectLiveDte(45, this)" class="bg-emerald-950/40 border-2 border-emerald-500 rounded-xl p-3 text-center relative">
-                        <div class="absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[7px] uppercase px-1 py-0.5 rounded-full font-black tracking-wider whitespace-nowrap ai-badge">AI Opt</div>
-                        <span class="block text-sm font-black text-emerald-400">45</span>
-                        <span class="text-[8px] uppercase font-bold text-emerald-300 tracking-wider">Std</span>
-                    </button>
-                </div>
-            </div>
+                    <div class="w-[24%]">
+                        <button onclick="fetchRealTimeData()" class="w-full bg-emerald-600 active:scale-95 text-white text-xs font-black py-3.5 rounded-xl flex items-center justify-center gap-1 transition-all uppercase tracking-wider shadow-md">
+                            SCAN <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                        </button>
+                    </div>
 
-            <div class="pt-1">
-                <label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Target Strategy Architecture</label>
-                <div class="grid grid-cols-3 gap-2" id="strategyButtonsContainer">
-                    <button id="stratBtn-Strangle" onclick="selectLiveStrategy('Long Strangle')" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
-                        <span class="block text-xs font-black text-zinc-200">Strangle</span>
-                        <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Vol Breakout</span>
-                    </button>
-                    <button id="stratBtn-Spread" onclick="selectLiveStrategy('Bull Call Spread')" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
-                        <span class="block text-xs font-black text-zinc-200">Call Spread</span>
-                        <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Directional</span>
-                    </button>
-                    <button id="stratBtn-Condor" onclick="selectLiveStrategy('Iron Condor')" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
-                        <span class="block text-xs font-black text-zinc-200">Iron Condor</span>
-                        <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Range Bound</span>
-                    </button>
+                    <div class="w-[48%]">
+                        <div class="flex justify-between items-center mb-1.5 px-0.5">
+                            <label class="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Allocation</label>
+                            <span id="allocationDisplay" class="text-xs font-black text-emerald-400 font-mono">$5,000</span>
+                        </div>
+                        <div class="relative flex items-center bg-black border-2 border-zinc-800 rounded-xl px-3 py-3">
+                            <span class="text-zinc-500 font-bold mr-1 text-sm">$</span>
+                            <input 
+                                type="number" 
+                                id="capitalInput" 
+                                value="5000" 
+                                step="500"
+                                oninput="calculateLiveSizing()" 
+                                class="w-full bg-transparent text-sm font-bold text-white focus:outline-none font-mono"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-1">
+                    <label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Target Days To Expiration (DTE)</label>
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="selectLiveDte(7, this)" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
+                            <span class="block text-sm font-black text-zinc-200">7</span>
+                            <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Wkly</span>
+                        </button>
+                        <button onclick="selectLiveDte(15, this)" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
+                            <span class="block text-sm font-black text-zinc-200">15</span>
+                            <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">BiWk</span>
+                        </button>
+                        <button onclick="selectLiveDte(30, this)" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
+                            <span class="block text-sm font-black text-zinc-200">30</span>
+                            <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Mth</span>
+                        </button>
+                        <button id="recommendedDteBtn" onclick="selectLiveDte(45, this)" class="bg-emerald-950/40 border-2 border-emerald-500 rounded-xl p-3 text-center relative">
+                            <div class="absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[7px] uppercase px-1 py-0.5 rounded-full font-black tracking-wider whitespace-nowrap ai-badge">AI Opt</div>
+                            <span class="block text-sm font-black text-emerald-400">45</span>
+                            <span class="text-[8px] uppercase font-bold text-emerald-300 tracking-wider">Std</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="pt-1">
+                    <label class="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-1.5">Target Strategy Architecture</label>
+                    <div class="grid grid-cols-3 gap-2" id="strategyButtonsContainer">
+                        <button id="stratBtn-Strangle" onclick="selectLiveStrategy('Long Strangle')" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
+                            <span class="block text-xs font-black text-zinc-200">Strangle</span>
+                            <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Vol Breakout</span>
+                        </button>
+                        <button id="stratBtn-Spread" onclick="selectLiveStrategy('Bull Call Spread')" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
+                            <span class="block text-xs font-black text-zinc-200">Call Spread</span>
+                            <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Directional</span>
+                        </button>
+                        <button id="stratBtn-Condor" onclick="selectLiveStrategy('Iron Condor')" class="bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative">
+                            <span class="block text-xs font-black text-zinc-200">Iron Condor</span>
+                            <span class="text-[8px] uppercase font-bold text-zinc-500 tracking-wider">Range Bound</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-2 mb-4">
-            <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex items-center gap-2.5">
-                <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
-                <div>
-                    <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Spot Price</p>
-                    <p id="livePriceBadge" class="text-xs font-black text-zinc-200">Loading...</p>
-                </div>
-            </div>
-            <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex items-center gap-2.5">
-                <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
-                <div>
-                    <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">24H Change</p>
-                    <p id="liveChangeBadge" class="text-xs font-black text-zinc-200">--</p>
-                </div>
-            </div>
-            <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex items-center gap-2.5">
-                <i data-lucide="bar-chart-3" class="w-4 h-4 text-amber-400"></i>
-                <div>
-                    <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Calculated HV</p>
-                    <p id="liveVolBadge" class="text-xs font-black text-zinc-200">Tracking...</p>
-                </div>
-            </div>
-            <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex items-center gap-2.5">
-                <i data-lucide="shield-check" class="w-4 h-4 text-teal-400"></i>
-                <div>
-                    <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Risk Guard</p>
-                    <p class="text-xs font-black text-teal-400">Hedge Safe</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-zinc-900 border-2 border-zinc-800 rounded-2xl shadow-2xl overflow-hidden relative">
+        <div class="px-4 mt-4 space-y-4">
             
-            <div id="loadingOverlay" class="absolute inset-0 bg-black/90 z-50 flex flex-col items-center justify-center gap-2 hidden">
-                <div class="w-6 h-6 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
-                <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Querying Telemetry...</p>
-            </div>
-
-            <div class="p-4 border-b border-zinc-800 bg-zinc-950/60 flex justify-between items-center">
-                <div>
-                    <div class="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-0.5">Architecture Matrix</div>
-                    <div class="flex items-center gap-2">
-                        <h2 id="strategyTitle" class="text-lg font-black text-white tracking-tight">Processing...</h2>
-                        <span id="strategyTypeBadge" class="text-[8px] font-bold bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/40 uppercase tracking-wide">--</span>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex items-center gap-2.5">
+                    <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+                    <div>
+                        <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Spot Price</p>
+                        <p id="livePriceBadge" class="text-xs font-black text-zinc-200">Loading...</p>
                     </div>
                 </div>
-                <div class="text-right bg-black px-3 py-1.5 rounded-xl border border-zinc-800">
-                    <div class="text-[8px] font-bold text-zinc-500 uppercase tracking-wider mb-0.5">Sizing</div>
-                    <div id="contractSizingDisplay" class="text-sm font-black text-emerald-400 font-mono">--</div>
-                </div>
-            </div>
-
-            <div class="p-4 space-y-4">
-                <div class="space-y-2" id="legsContainer">
-                    </div>
-
-                <div class="grid grid-cols-3 gap-2 text-center font-medium">
-                    <div class="bg-emerald-950/30 border border-emerald-500/30 rounded-xl p-2.5">
-                        <div class="text-emerald-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Target TP</div>
-                        <div id="tpDisplay" class="text-sm font-black text-emerald-300 font-mono">50%</div>
-                    </div>
-                    <div class="bg-rose-950/30 border border-rose-500/30 rounded-xl p-2.5">
-                        <div class="text-rose-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Stop Hard</div>
-                        <div id="slDisplay" class="text-sm font-black text-rose-300 font-mono">30%</div>
-                    </div>
-                    <div class="bg-amber-950/30 border border-amber-500/30 rounded-xl p-2.5">
-                        <div class="text-amber-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Time Lock</div>
-                        <div id="timeoutDisplay" class="text-sm font-black text-amber-300 font-mono">15 DTE</div>
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex items-center gap-2.5">
+                    <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+                    <div>
+                        <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">24H Change</p>
+                        <p id="liveChangeBadge" class="text-xs font-black text-zinc-200">--</p>
                     </div>
                 </div>
-
-                <div class="bg-black border border-zinc-800 rounded-xl p-3 flex items-start gap-2.5">
-                    <i data-lucide="sparkles" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
-                    <p id="contextSummary" class="text-[11px] text-zinc-400 leading-relaxed font-medium">
-                        Awaiting data core ingestion sequence...
-                    </p>
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex items-center gap-2.5">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-amber-400"></i>
+                    <div>
+                        <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Calculated HV</p>
+                        <p id="liveVolBadge" class="text-xs font-black text-zinc-200">Tracking...</p>
+                    </div>
+                </div>
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-3 flex items-center gap-2.5">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-teal-400"></i>
+                    <div>
+                        <p class="text-[8px] uppercase tracking-wider text-zinc-500 font-bold">Risk Guard</p>
+                        <p class="text-xs font-black text-teal-400">Hedge Safe</p>
+                    </div>
                 </div>
             </div>
+
+            <div class="bg-zinc-900 border-2 border-zinc-800 rounded-2xl shadow-2xl overflow-hidden relative">
+                
+                <div id="loadingOverlay" class="absolute inset-0 bg-black/90 z-50 flex flex-col items-center justify-center gap-2 hidden">
+                    <div class="w-6 h-6 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Querying Telemetry...</p>
+                </div>
+
+                <div class="p-4 border-b border-zinc-800 bg-zinc-950/60 flex justify-between items-center">
+                    <div>
+                        <div class="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-0.5">Architecture Matrix</div>
+                        <div class="flex items-center gap-2">
+                            <h2 id="strategyTitle" class="text-lg font-black text-white tracking-tight">Processing...</h2>
+                            <span id="strategyTypeBadge" class="text-[8px] font-bold bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/40 uppercase tracking-wide">--</span>
+                        </div>
+                    </div>
+                    <div class="text-right bg-black px-3 py-1.5 rounded-xl border border-zinc-800">
+                        <div class="text-[8px] font-bold text-zinc-500 uppercase tracking-wider mb-0.5">Sizing</div>
+                        <div id="contractSizingDisplay" class="text-sm font-black text-emerald-400 font-mono">--</div>
+                    </div>
+                </div>
+
+                <div class="p-4 space-y-4">
+                    <div class="space-y-2" id="legsContainer">
+                        </div>
+
+                    <div class="grid grid-cols-3 gap-2 text-center font-medium">
+                        <div class="bg-emerald-950/30 border border-emerald-500/30 rounded-xl p-2.5">
+                            <div class="text-emerald-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Target TP</div>
+                            <div id="tpDisplay" class="text-sm font-black text-emerald-300 font-mono">50%</div>
+                        </div>
+                        <div class="bg-rose-950/20 border border-rose-500/30 rounded-xl p-2.5">
+                            <div class="text-rose-400/90 text-[8px] uppercase tracking-widest font-black mb-0.5">Stop Hard</div>
+                            <div id="slDisplay" class="text-sm font-black text-rose-400/90 font-mono">30%</div>
+                        </div>
+                        <div class="bg-amber-950/30 border border-amber-500/30 rounded-xl p-2.5">
+                            <div class="text-amber-400 text-[8px] uppercase tracking-widest font-black mb-0.5">Time Lock</div>
+                            <div id="timeoutDisplay" class="text-sm font-black text-amber-300 font-mono">15 DTE</div>
+                        </div>
+                    </div>
+
+                    <div class="bg-black border border-zinc-800 rounded-xl p-3 flex items-start gap-2.5">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-emerald-400 mt-0.5 flex-shrink-0"></i>
+                        <p id="contextSummary" class="text-[11px] text-zinc-400 leading-relaxed font-medium">
+                            Awaiting data core ingestion sequence...
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </div>
 
@@ -222,7 +229,7 @@
         let globalLivePrice = 0;
         let globalEstimatedUnitCost = 450;
         let selectedDteValue = 45; 
-        let selectedStrategyValue = "AI"; // Tracks user selection override or defers to automated AI logic
+        let selectedStrategyValue = "AI"; 
         let currentCalculatedVol = 34.2;
 
         function toggleSettingsPanel() {
@@ -286,11 +293,10 @@
             let durationMultiplier = selectedDteValue / 45;
             let baseStrategyCost = globalLivePrice * 0.85;
 
-            // Compute strategy-specific pricing parameters for allocation estimation
             if (selectedStrategyValue === "Long Strangle" || (selectedStrategyValue === "AI" && volatility > 30)) {
                 baseStrategyCost = globalLivePrice * 1.6;
             } else if (selectedStrategyValue === "Iron Condor") {
-                baseStrategyCost = globalLivePrice * 0.45; // Net credit spreads require lower margin allocation limits
+                baseStrategyCost = globalLivePrice * 0.45; 
             }
 
             globalEstimatedUnitCost = Math.max(75, Math.round(baseStrategyCost * durationMultiplier));
@@ -329,7 +335,7 @@
                 document.getElementById('livePriceBadge').innerText = `$${globalLivePrice.toFixed(2)}`;
                 const changeBadge = document.getElementById('liveChangeBadge');
                 changeBadge.innerText = `${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%`;
-                changeBadge.className = `text-xs font-black ${changePercent >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+                changeBadge.className = `text-xs font-black ${changePercent >= 0 ? 'text-emerald-400' : 'text-rose-400/90'}`;
                 
                 currentCalculatedVol = ticker === "QQQ" || ticker === "SPY" ? 34.2 : 24.5;
                 document.getElementById('liveVolBadge').innerText = `HV ${currentCalculatedVol.toFixed(1)}%`;
@@ -359,24 +365,20 @@
                 const btn = document.getElementById(containerIds[strat]);
                 if (!btn) return;
 
-                // Clear dynamic UI tags and borders
                 btn.className = "bg-black border border-zinc-800 rounded-xl p-3 text-center active:bg-zinc-800 transition-all relative";
                 const existingBadge = btn.querySelector('.ai-badge');
                 if (existingBadge) existingBadge.remove();
 
-                // Append active configuration highlighting
                 if (selectedStrategyValue === strat) {
                     btn.className = "bg-emerald-950/40 border-2 border-emerald-500 rounded-xl p-3 text-center relative";
                 }
 
-                // Inject AI Optimized contextual badge tags
                 if (aiRecommended === strat) {
                     const badgeDiv = document.createElement('div');
                     badgeDiv.className = "absolute -top-2 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[7px] uppercase px-1 py-0.5 rounded-full font-black tracking-wider whitespace-nowrap ai-badge";
                     badgeDiv.innerText = "AI Opt";
                     btn.appendChild(badgeDiv);
                     
-                    // If no user override exists, match the green layout selection boundary
                     if (selectedStrategyValue === "AI") {
                         btn.className = "bg-emerald-950/40 border-2 border-emerald-500 rounded-xl p-3 text-center relative";
                     }
@@ -433,10 +435,12 @@
             const container = document.getElementById('legsContainer');
             container.innerHTML = '';
             legs.forEach(leg => {
+                const isBuy = leg.type.includes('Buy');
+                const textClass = isBuy ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' : 'bg-rose-500/10 text-rose-400/90 border-rose-500/20';
                 container.insertAdjacentHTML('beforeend', `
                     <div class="bg-black border border-zinc-800 rounded-xl p-3 flex items-center justify-between">
                         <div>
-                            <span class="text-[9px] uppercase font-black tracking-wider px-1.5 py-0.5 ${leg.type.includes('Buy') ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40' : 'bg-rose-500/20 text-rose-400 border-rose-500/40'} rounded border mr-1">${leg.type.split(' ')[0]}</span>
+                            <span class="text-[9px] uppercase font-black tracking-wider px-1.5 py-0.5 ${textClass} rounded border mr-1">${leg.type.split(' ')[0]}</span>
                             <span class="text-xs font-black text-zinc-300">${leg.type.split(' ')[1]}</span>
                             <p class="text-[10px] text-zinc-500 mt-0.5">${leg.desc}</p>
                         </div>
