@@ -28,11 +28,68 @@
         * { -webkit-tap-highlight-color: transparent; }
         body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
         select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+
+        /* Side border frame */
+        #appFrame {
+            position: relative;
+        }
+        #appFrame::before,
+        #appFrame::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        #appFrame::before {
+            left: calc(50% - 224px);
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                #10b981 15%,
+                #10b98155 50%,
+                #10b981 85%,
+                transparent 100%
+            );
+            box-shadow: 0 0 8px 0px #10b98166;
+        }
+        #appFrame::after {
+            right: calc(50% - 224px);
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                #f43f5e 15%,
+                #f43f5e55 50%,
+                #f43f5e 85%,
+                transparent 100%
+            );
+            box-shadow: 0 0 8px 0px #f43f5e66;
+        }
+
+        /* Top + bottom hairline caps */
+        #appFrame .frame-top,
+        #appFrame .frame-bottom {
+            position: fixed;
+            left: calc(50% - 224px);
+            right: calc(50% - 224px);
+            height: 1px;
+            z-index: 9999;
+            pointer-events: none;
+            background: linear-gradient(to right, #10b981, #f43f5e);
+            opacity: 0.5;
+        }
+        #appFrame .frame-top  { top: 0; }
+        #appFrame .frame-bottom { bottom: 0; }
     </style>
 </head>
 <body class="bg-black text-white min-h-screen font-sans antialiased selection:bg-emerald-500/40">
 
     <!-- MAIN CENTRAL VIEWPORT -->
+    <div id="appFrame">
+        <div class="frame-top"></div>
+        <div class="frame-bottom"></div>
     <div class="max-w-md mx-auto pb-8 min-h-screen flex flex-col px-3">
         
         <!-- ULTRA-COMPACT STICKY CONTROL DECK -->
@@ -555,6 +612,8 @@
             setTimeout(() => { lucide.createIcons(); }, 50);
         });
     </script>
+    </div><!-- /appFrame -->
+
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
