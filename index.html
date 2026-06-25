@@ -26,13 +26,31 @@
     
     <style>
         * { -webkit-tap-highlight-color: transparent; }
-        body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+        html, body { 
+            margin: 0; padding: 0; 
+            width: 100%; min-height: 100vh; 
+            background: #000; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+        }
+        body { 
+            padding-top: env(safe-area-inset-top); 
+            padding-bottom: env(safe-area-inset-bottom); 
+        }
         select { -webkit-appearance: none; -moz-appearance: none; appearance: none; }
 
-        /* Side border frame */
+        /* Central app container */
         #appFrame {
+            width: 100%;
+            max-width: 448px; /* max-w-md = 28rem = 448px */
+            min-height: 100vh;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
+
+        /* Side border frame */
         #appFrame::before,
         #appFrame::after {
             content: '';
@@ -82,15 +100,21 @@
         }
         #appFrame .frame-top  { top: 0; }
         #appFrame .frame-bottom { bottom: 0; }
+
+        /* Hide side borders on narrow phones where they'd clip inside content */
+        @media (max-width: 460px) {
+            #appFrame::before, #appFrame::after,
+            #appFrame .frame-top, #appFrame .frame-bottom { display: none; }
+        }
     </style>
 </head>
-<body class="bg-black text-white min-h-screen font-sans antialiased selection:bg-emerald-500/40">
+<body class="bg-black text-white min-h-screen font-sans antialiased selection:bg-emerald-500/40" style="display:flex;flex-direction:column;align-items:center">
 
     <!-- MAIN CENTRAL VIEWPORT -->
-    <div id="appFrame">
+    <div id="appFrame" class="w-full">
         <div class="frame-top"></div>
         <div class="frame-bottom"></div>
-    <div class="max-w-md mx-auto pb-8 min-h-screen flex flex-col px-3">
+    <div class="w-full max-w-md mx-auto pb-8 min-h-screen flex flex-col px-3">
         
         <!-- ULTRA-COMPACT STICKY CONTROL DECK -->
         <div class="sticky top-0 z-40 bg-black/95 pt-3 pb-2 border-b border-zinc-900/90 backdrop-blur-md space-y-2.5">
